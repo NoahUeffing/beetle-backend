@@ -1,0 +1,14 @@
+server:
+  port: 8080
+  host: "0.0.0.0"
+database:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: postgres
+  name: beetle
+  sslmode: disable
+
+log:
+  level: "debug"
+  format: "text" # text or json
