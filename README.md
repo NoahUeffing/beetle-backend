@@ -1,3 +1,7 @@
+# THIS REPO IS A WORK IN PROGRESS
+
+# NOT ALL OF THE BELOW HAS BEEN IMPLEMENTED YET
+
 # Beetle Rest API
 
 This repo represents the REST api for the Beetle platform
