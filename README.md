@@ -53,10 +53,10 @@ Once running locally, the API documentation can be found at [http://localhost:80
 
 ### Database Administration
 
-Once running locally, you can use the Adminer tool [http://localhost:18080](http://localhost:18080) with the following settings (everything except password will be pre-filled if you use [this link](http://localhost:18080/?pgsql=database&username=postgres&db=beetle&ns=public))
+Once running locally, you can use the Adminer tool [http://localhost:18080](http://localhost:18080) with the following settings (everything except password will be pre-filled if you use [this link](localhost:18080/?pgsql=db&username=postgres&db=beetle&ns=public))
 
 - System: **PostgreSQL**
-- Server: **database**
+- Server: **db**
 - Username: **postgres**
 - Password: **postgres**
 - Database: **beetle**

@@ -12,7 +12,7 @@ DB_USER := postgres
 DB_PASSWORD := postgres
 DB_NAME := beetle
 DB_HOST := localhost
-DB_PORT := 15432
+DB_PORT := 5432
 DB_URL := postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable
 
 # Goose migration settings
@@ -83,7 +83,7 @@ db-logs:
 	docker-compose --profile db logs -f
 
 # Migration commands
-migrate-create:
+goose-create:
 	@read -p "Enter migration name: " name; \
 	$(GOOSE) create $$name sql
 
