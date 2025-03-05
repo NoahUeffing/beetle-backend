@@ -3,17 +3,17 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 
 	"beetle/internal/config"
-	"beetle/internal/domain"
 	"beetle/internal/handler"
+	"beetle/internal/router"
 
-	"github.com/gorilla/mux"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	// Initialize database
+	// Initialize database connection
 	dbConfig := config.NewDBConfig()
 	fmt.Println("Host")
 	fmt.Println(dbConfig.Host)
@@ -22,41 +22,24 @@ func main() {
 		log.Fatal("Failed to connect to database:", err)
 	}
 
-	// Auto migrate the schema
-	if err := db.AutoMigrate(&domain.Task{}); err != nil {
-		log.Fatal("Failed to migrate database:", err)
-	}
+	// Initialize Echo
+	e := echo.New()
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
-	// Initialize router and handler
-	r := mux.NewRouter()
-	taskHandler := handler.NewTaskHandler(db)
+	// Initialize task handler
+	taskHandler := handler.NewUserHandler(db)
 
-	// Define routes
-	r.HandleFunc("/", HomeHandler).Methods("GET")
-	r.HandleFunc("/health", HealthCheckHandler).Methods("GET")
+	// Initialize router
+	appConfig := config.Config{} // Create a proper config if needed
+	r := router.New(appConfig, taskHandler)
 
-	// Task routes
-	r.HandleFunc("/tasks", taskHandler.GetTasks).Methods("GET")
-	r.HandleFunc("/tasks", taskHandler.CreateTask).Methods("POST")
-	r.HandleFunc("/tasks/{id}", taskHandler.GetTask).Methods("GET")
-	r.HandleFunc("/tasks/{id}", taskHandler.UpdateTask).Methods("PUT")
-	r.HandleFunc("/tasks/{id}", taskHandler.DeleteTask).Methods("DELETE")
+	// Add routes to Echo
+	r.AddRoutes(e)
 
 	// Start server
 	log.Printf("Starting server on :8080")
-	if err := http.ListenAndServe(":8080", r); err != nil {
+	if err := e.Start(":8080"); err != nil {
 		log.Fatal(err)
 	}
-}
-
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"message": "Welcome to the Beetle API"}`))
-}
-
-func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"status": "healthy"}`))
 }
