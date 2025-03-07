@@ -57,6 +57,7 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 	// Create user
 	user, err := h.userService.CreateUser(&input)
 	if err != nil {
+		// TODO: Check if the error is a duplicate username or email
 		// Log the error for debugging
 		log.Printf("Error creating user: %v", err)
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to create user"})

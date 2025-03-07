@@ -183,6 +183,7 @@
             "required": [
                 "email",
                 "password",
+                "password_confirm",
                 "username"
             ],
             "properties": {
@@ -192,6 +193,9 @@
                 "password": {
                     "type": "string",
                     "minLength": 8
+                },
+                "password_confirm": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string"

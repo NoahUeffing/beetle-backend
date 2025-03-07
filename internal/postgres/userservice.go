@@ -31,6 +31,7 @@ func (s *UserService) CreateUser(input *domain.UserCreateInput) (*domain.User, e
 
 	// Save the user to the database
 	if err := s.WriteDB.Create(user).Error; err != nil {
+		// TODO: Check if the error is a duplicate username or email
 		return nil, err
 	}
 

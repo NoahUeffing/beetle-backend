@@ -194,6 +194,7 @@ const docTemplate = `{
             "required": [
                 "email",
                 "password",
+                "password_confirm",
                 "username"
             ],
             "properties": {
@@ -203,6 +204,9 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "minLength": 8
+                },
+                "password_confirm": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string"

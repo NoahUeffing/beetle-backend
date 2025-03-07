@@ -43,11 +43,14 @@ definitions:
       password:
         minLength: 8
         type: string
+      password_confirm:
+        type: string
       username:
         type: string
     required:
     - email
     - password
+    - password_confirm
     - username
     type: object
   healthcheck.Status:
