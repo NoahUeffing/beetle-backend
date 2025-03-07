@@ -1,36 +1,54 @@
 definitions:
-  domain.Task:
-    description: A task entity with its properties
+  domain.User:
     properties:
+      city:
+        type: string
+      country:
+        type: string
       created_at:
-        description: The timestamp when the task was created
-        example: "2024-02-27T12:00:00Z"
+        type: string
+      date_of_birth:
         type: string
       deleted_at:
-        description: The timestamp when the task was deleted (soft delete)
-        example: "2024-02-27T12:00:00Z"
-        format: date-time
         type: string
-      description:
-        description: A detailed description of the task
-        example: Write comprehensive documentation for the API endpoints
+      email:
+        type: string
+      first_name:
+        type: string
+      gender:
         type: string
       id:
-        description: The unique identifier of the task
-        example: 1
-        type: integer
-      status:
-        description: The current status of the task (pending, in_progress, completed)
-        example: pending
         type: string
-      title:
-        description: The title of the task
-        example: Complete project documentation
+      last_name:
         type: string
       updated_at:
-        description: The timestamp when the task was last updated
-        example: "2024-02-27T12:00:00Z"
         type: string
+      username:
+        type: string
+    type: object
+  domain.UserAuthInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  domain.UserCreateInput:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - username
     type: object
   healthcheck.Status:
     properties:
@@ -46,146 +64,7 @@ definitions:
 info:
   contact: {}
 paths:
-  /api/v1/tasks:
-    get:
-      description: Retrieve a list of all tasks
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/domain.Task'
-            type: array
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      summary: Get all tasks
-      tags:
-      - tasks
-    post:
-      consumes:
-      - application/json
-      description: Create a new task with the provided details
-      parameters:
-      - description: Task object
-        in: body
-        name: task
-        required: true
-        schema:
-          $ref: '#/definitions/domain.Task'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/domain.Task'
-        "400":
-          description: Bad request
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      summary: Create a new task
-      tags:
-      - tasks
-  /api/v1/tasks/{id}:
-    delete:
-      description: Delete a task by its ID
-      parameters:
-      - description: Task ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Invalid task ID
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      summary: Delete a task
-      tags:
-      - tasks
-    get:
-      description: Retrieve a task by its ID
-      parameters:
-      - description: Task ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Task'
-        "400":
-          description: Invalid task ID
-          schema:
-            type: string
-        "404":
-          description: Task not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      summary: Get a task by ID
-      tags:
-      - tasks
-    put:
-      consumes:
-      - application/json
-      description: Update a task with the provided details
-      parameters:
-      - description: Task ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Task object
-        in: body
-        name: task
-        required: true
-        schema:
-          $ref: '#/definitions/domain.Task'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Task'
-        "400":
-          description: Invalid task ID or bad request
-          schema:
-            type: string
-        "404":
-          description: Task not found
-          schema:
-            type: string
-        "500":
-          description: Internal server error
-          schema:
-            type: string
-      summary: Update a task
-      tags:
-      - tasks
-  /healthcheck:
+  /v1/healthcheck:
     get:
       operationId: v1-healthcheck
       produces:
@@ -203,4 +82,64 @@ paths:
         internal services
       tags:
       - test
+  /v1/tokens:
+    post:
+      description: Creates a new JWT auth token bearing the user's identity, which
+        should be used to authorize further requests.
+      operationId: v1-authtoken-create
+      parameters:
+      - description: Login form input
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UserAuthInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get a new authorization token via email and password
+      tags:
+      - auth
+  /v1/user:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided details
+      parameters:
+      - description: User object
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UserCreateInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.User'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Create a new user
+      tags:
+      - user
 swagger: "2.0"

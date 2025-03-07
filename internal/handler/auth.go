@@ -6,15 +6,15 @@ func GetHeader(c Context, key string) string {
 
 // AuthTokenCreate godoc
 // @Summary Get a new authorization token via email and password
-// @Description Creates a new JWT auth token bearing the members identity and roles, which should be used to authorize further requests.
+// @Description Creates a new JWT auth token bearing the user's identity, which should be used to authorize further requests.
 // @ID v1-authtoken-create
 // @Tags auth
 // @Produce json
-// @Param credentials body domain.MemberAuthInput true "Login form input"
-// @Success 200 {object} domain.MemberAuthToken
-// @Failure 400 {object} handler.FormValidationError
-// @Failure 500 {object} handler.Message
-// @Router /tokens [post]
+// @Param credentials body domain.UserAuthInput true "Login form input"
+// @Success 200 {object} domain.User
+// @Failure 400 {string} string "Bad request"
+// @Failure 500 {string} string "Internal server error"
+// @Router /v1/tokens [post]
 func AuthTokenCreate(c Context) error {
 	/* TODO: Implement
 	i := &domain.UserAuthInput{}

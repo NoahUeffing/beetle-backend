@@ -13,17 +13,18 @@ type userRouteProvider struct {
 
 // TODO:
 
-func NewUserRouteProvider(taskHandler *handler.UserHandler) *userRouteProvider {
+func NewUserRouteProvider(userHandler *handler.UserHandler) *userRouteProvider {
 	return &userRouteProvider{
-		userHandler: taskHandler,
+		userHandler: userHandler,
 	}
 }
 
 func (r *userRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
-	// We need to adapt the handler methods to work with Echo
-	// This will be implemented later
+	// Public user routes
+	g.POST("/user", r.userHandler.CreateUser)
 }
 
 func (r *userRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {
-	// No private routes for now
+	// Private user routes (requiring authentication)
+	// None for now
 }

@@ -4,217 +4,7 @@
         "contact": {}
     },
     "paths": {
-        "/api/v1/tasks": {
-            "get": {
-                "description": "Retrieve a list of all tasks",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tasks"
-                ],
-                "summary": "Get all tasks",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/domain.Task"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Create a new task with the provided details",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tasks"
-                ],
-                "summary": "Create a new task",
-                "parameters": [
-                    {
-                        "description": "Task object",
-                        "name": "task",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.Task"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Task"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/tasks/{id}": {
-            "get": {
-                "description": "Retrieve a task by its ID",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tasks"
-                ],
-                "summary": "Get a task by ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Task ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Task"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid task ID",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "404": {
-                        "description": "Task not found",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Update a task with the provided details",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "tasks"
-                ],
-                "summary": "Update a task",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Task ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Task object",
-                        "name": "task",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.Task"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/domain.Task"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid task ID or bad request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "404": {
-                        "description": "Task not found",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete a task by its ID",
-                "tags": [
-                    "tasks"
-                ],
-                "summary": "Delete a task",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Task ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    },
-                    "400": {
-                        "description": "Invalid task ID",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/healthcheck": {
+        "/v1/healthcheck": {
             "get": {
                 "produces": [
                     "application/json"
@@ -239,48 +29,172 @@
                     }
                 }
             }
+        },
+        "/v1/tokens": {
+            "post": {
+                "description": "Creates a new JWT auth token bearing the user's identity, which should be used to authorize further requests.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get a new authorization token via email and password",
+                "operationId": "v1-authtoken-create",
+                "parameters": [
+                    {
+                        "description": "Login form input",
+                        "name": "credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UserAuthInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user": {
+            "post": {
+                "description": "Create a new user with the provided details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create a new user",
+                "parameters": [
+                    {
+                        "description": "User object",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UserCreateInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "domain.Task": {
-            "description": "A task entity with its properties",
+        "domain.User": {
             "type": "object",
             "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
                 "created_at": {
-                    "description": "The timestamp when the task was created",
-                    "type": "string",
-                    "example": "2024-02-27T12:00:00Z"
+                    "type": "string"
+                },
+                "date_of_birth": {
+                    "type": "string"
                 },
                 "deleted_at": {
-                    "description": "The timestamp when the task was deleted (soft delete)",
-                    "type": "string",
-                    "format": "date-time",
-                    "example": "2024-02-27T12:00:00Z"
+                    "type": "string"
                 },
-                "description": {
-                    "description": "A detailed description of the task",
-                    "type": "string",
-                    "example": "Write comprehensive documentation for the API endpoints"
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
                 },
                 "id": {
-                    "description": "The unique identifier of the task",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string"
                 },
-                "status": {
-                    "description": "The current status of the task (pending, in_progress, completed)",
-                    "type": "string",
-                    "example": "pending"
-                },
-                "title": {
-                    "description": "The title of the task",
-                    "type": "string",
-                    "example": "Complete project documentation"
+                "last_name": {
+                    "type": "string"
                 },
                 "updated_at": {
-                    "description": "The timestamp when the task was last updated",
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.UserAuthInput": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.UserCreateInput": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string",
-                    "example": "2024-02-27T12:00:00Z"
+                    "minLength": 8
+                },
+                "username": {
+                    "type": "string"
                 }
             }
         },

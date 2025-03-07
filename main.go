@@ -6,6 +6,7 @@ import (
 
 	"beetle/internal/config"
 	"beetle/internal/handler"
+	"beetle/internal/postgres"
 	"beetle/internal/router"
 
 	"github.com/labstack/echo/v4"
@@ -27,12 +28,18 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
-	// Initialize task handler
-	taskHandler := handler.NewUserHandler(db)
+	// Initialize user service
+	userService := &postgres.UserService{
+		ReadDB:  db,
+		WriteDB: db,
+	}
+
+	// Initialize user handler
+	userHandler := handler.NewUserHandler(userService)
 
 	// Initialize router
 	appConfig := config.Config{} // Create a proper config if needed
-	r := router.New(appConfig, taskHandler)
+	r := router.New(appConfig, userHandler)
 
 	// Add routes to Echo
 	r.AddRoutes(e)

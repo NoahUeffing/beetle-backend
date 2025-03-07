@@ -62,9 +62,6 @@ func New(cc handler.ContextConfig) *Server {
 	s.e.Use(middleware.CORS())
 	s.e.Use(s.contextMiddleware)
 
-	// Routes
-	s.e.GET("/healthcheck", s.wrap(handler.HealthCheck))
-
 	// API v1 routes
 	v1 := s.e.Group("/v1")
 	v1.POST("/tokens", s.wrap(handler.AuthTokenCreate))

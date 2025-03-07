@@ -2,11 +2,12 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
+# Build the application without running swag init
 cmd = "go build -o ./tmp/main ."
 bin = "tmp/main"
 full_bin = "BEETLE_CONFIG_FILE=./configs/development.yaml ./tmp/main"
 include_ext = ["go", "tpl", "tmpl", "html"]
-exclude_dir = ["assets", "tmp", "vendor", "testdata"]
+exclude_dir = ["assets", "tmp", "vendor", "testdata", "docs"]
 include_dir = []
 exclude_file = []
 delay = 1000

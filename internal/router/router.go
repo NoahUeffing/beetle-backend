@@ -47,7 +47,6 @@ func (r *Router) AddRoutes(e *echo.Echo, authMiddlewares ...echo.MiddlewareFunc)
 
 	// Add root routes
 	e.GET("/", HomeHandler)
-	e.GET("/health", HealthCheckHandler)
 }
 
 // HomeHandler handles the root endpoint

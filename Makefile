@@ -53,8 +53,20 @@ install-dev-tools:
 	@go install github.com/swaggo/swag/cmd/swag@latest
 	@go install github.com/pressly/goose/v3/cmd/goose@latest
 	@go install honnef.co/go/tools/cmd/staticcheck@latest
+	@echo "Note: For swagger-watch, you need to install entr: brew install entr (macOS) or apt-get install entr (Linux)"
 
+# Run the application with hot reload
 watch: install-dev-tools
+	@BEETLE_CONFIG_FILE=$(DEVELOPMENT_CONFIG) air
+
+# Run the application with hot reload and Swagger documentation generation
+watch-with-swagger: install-dev-tools swagger
+	@BEETLE_CONFIG_FILE=$(DEVELOPMENT_CONFIG) air
+
+# Run the application with hot reload and watch for Swagger changes in a separate terminal
+watch-all: install-dev-tools
+	@echo "Starting application with hot reload..."
+	@echo "Please run 'make swagger-watch' in a separate terminal to watch for API changes and update Swagger docs"
 	@BEETLE_CONFIG_FILE=$(DEVELOPMENT_CONFIG) air
 
 install:
@@ -126,7 +138,23 @@ init:
 
 # Swagger commands
 swagger:
-	$(EXTENDED_PATH) swag init -g ./internal/server/server.go -o ./api/swaggergenerated --parseInternal
+	@echo "Generating Swagger documentation..."
+	@swag init -g main.go -o ./docs --parseInternal
+
+# Watch for changes to API code and update Swagger documentation (requires entr: brew install entr)
+swagger-watch:
+	@echo "Watching for changes to API code and updating Swagger documentation..."
+	@if command -v entr >/dev/null 2>&1; then \
+		while true; do \
+			find . -name "*.go" | grep -v "/vendor/" | grep -v "/tmp/" | entr -d swag init -g main.go -o ./docs --parseInternal; \
+		done; \
+	else \
+		echo "Error: 'entr' command not found. Please install it:"; \
+		echo "  - macOS: brew install entr"; \
+		echo "  - Linux: apt-get install entr"; \
+		echo "  - Or manually run 'make swagger' after making changes"; \
+		exit 1; \
+	fi
 
 # Linting
 lint: fmt vet staticcheck
