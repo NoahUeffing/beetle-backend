@@ -162,8 +162,19 @@ lint: fmt vet staticcheck
 fmt:
 	@$(GO) fmt ./...
 
+fmt-check:
+	@test -z $$($(GO) fmt ./...)
+
 vet:
 	@$(GO) vet ./...
 
 staticcheck:
-	@staticcheck ./... 
+	@staticcheck ./...
+
+# Build commands
+compile:
+	$(GO) build ./...
+
+# Swagger commands
+swag:
+	@swag init -g main.go -o ./docs --parseInternal 
