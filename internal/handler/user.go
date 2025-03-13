@@ -42,11 +42,7 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 
 	// Validate input using the validator
 	if errors := h.validator.Validate(&input); errors != nil {
-		// Get the English translator
-		trans, _ := h.validator.Translator.GetTranslator("en")
-
-		// Translate validation errors
-		translatedErrors := h.validator.TranslateFormErrors(trans, *errors)
+		translatedErrors := translateErrors(h.validator, &input, errors)
 
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"error":  "Validation failed",
