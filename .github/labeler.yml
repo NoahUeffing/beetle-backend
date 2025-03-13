@@ -1,7 +1,0 @@
-"notice: has migration":
-    - assets/db/migrations/*.sql
-
-"type: api":
-    - internal/handler/*.go
-    - internal/router/*.go
-    - internal/postgres/*.go
