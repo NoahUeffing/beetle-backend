@@ -17,10 +17,18 @@ func WithContext(h func(handler.Context) error) echo.HandlerFunc {
 	}
 }
 
-type tokenRouteProvider struct{}
+type tokenRouteProvider struct {
+	authHandler *handler.AuthHandler
+}
+
+func NewTokenRouteProvider(authHandler *handler.AuthHandler) *tokenRouteProvider {
+	return &tokenRouteProvider{
+		authHandler: authHandler,
+	}
+}
 
 func (r *tokenRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
-	g.POST("/tokens", WithContext(handler.AuthTokenCreate))
+	g.POST("/tokens", r.authHandler.AuthTokenCreate)
 }
 
 func (r *tokenRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {

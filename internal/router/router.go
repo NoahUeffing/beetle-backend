@@ -19,10 +19,10 @@ type Router struct {
 	Config         config.Config
 }
 
-func New(config config.Config, userHandler *handler.UserHandler) *Router {
+func New(config config.Config, userHandler *handler.UserHandler, authHandler *handler.AuthHandler) *Router {
 	return &Router{
 		RouteProviders: []routeProvider{
-			&tokenRouteProvider{},
+			NewTokenRouteProvider(authHandler),
 			&healthcheckRouteProvider{},
 			NewUserRouteProvider(userHandler),
 		},

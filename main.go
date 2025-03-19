@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	_ "beetle/docs" // Required for Swagger docs
 	"beetle/internal/auth"
 	"beetle/internal/config"
 	"beetle/internal/handler"
@@ -12,7 +13,29 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
+
+// @title Beetle API
+// @version 1.0
+// @description This is the Beetle API server.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /
+// @schemes http
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Enter the token with the `Bearer: ` prefix, e.g. "Bearer abcde12345".
 
 func main() {
 	// Initialize database connection
@@ -41,15 +64,19 @@ func main() {
 		AuthService: authService,
 	}
 
-	// Initialize user handler
+	// Initialize handlers
 	userHandler := handler.NewUserHandler(userService)
+	authHandler := handler.NewAuthHandler(userService)
 
 	// Initialize router
 	appConfig := config.Config{} // Create a proper config if needed
-	r := router.New(appConfig, userHandler)
+	r := router.New(appConfig, userHandler, authHandler)
 
 	// Add routes to Echo
 	r.AddRoutes(e)
+
+	// Add Swagger handler
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// Start server
 	log.Printf("Starting server on :8080")

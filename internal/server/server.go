@@ -5,26 +5,13 @@ import (
 	"log"
 	"os"
 
+	_ "beetle/docs" // Required for Swagger docs
 	"beetle/internal/handler"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
-
-// @title Beetle API
-// @version 1.0
-// @description This is the REST API for the Beetle platform
-// @termsOfService http://swagger.io/terms/
-
-// @contact.name API Support
-// @contact.email your-email@domain.com
-
-// @license.name MIT
-// @license.url https://opensource.org/licenses/MIT
-
-// @host localhost:8080
-// @BasePath /
-// @schemes http https
 
 type Server struct {
 	e  *echo.Echo
@@ -62,9 +49,8 @@ func New(cc handler.ContextConfig) *Server {
 	s.e.Use(middleware.CORS())
 	s.e.Use(s.contextMiddleware)
 
-	// API v1 routes
-	v1 := s.e.Group("/v1")
-	v1.POST("/tokens", s.wrap(handler.AuthTokenCreate))
+	// Swagger documentation
+	s.e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	return s
 }
