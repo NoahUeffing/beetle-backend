@@ -70,7 +70,7 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 // @Tags user
 // @Accept json
 // @Produce json
-// @Security BearerAuth
+// @Security JWTToken
 // @Param id path string true "User ID"
 // @Success 200 {object} domain.User
 // @Failure 400 {string} string "Bad request"
