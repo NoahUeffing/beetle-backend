@@ -20,11 +20,12 @@ import (
 // @version 1.0
 
 // @BasePath /v1
-// @securityDefinitions.apikey JWTToken
+// @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
 // @description Enter the token with the `Bearer: ` prefix, e.g. "Bearer abcde12345".
 
+// TODO: Above security definition is not working
 func main() {
 	// Initialize database connection
 	dbConfig := config.NewDBConfig()
