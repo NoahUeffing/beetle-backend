@@ -18,6 +18,17 @@ type Server struct {
 	cc handler.ContextConfig
 }
 
+// @title Beetle API
+// @version 1.0
+
+// @BasePath /v1
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Enter the token with the `Bearer: ` prefix, e.g. "Bearer abcde12345".
+
+// TODO: Above security definition is not working, auth does not work with curl either
+
 func (s *Server) contextMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := &handler.Context{

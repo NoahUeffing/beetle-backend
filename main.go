@@ -16,16 +16,6 @@ import (
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
-// @title Beetle API
-// @version 1.0
-
-// @BasePath /v1
-// @securityDefinitions.apikey Bearer
-// @in header
-// @name Authorization
-// @description Enter the token with the `Bearer: ` prefix, e.g. "Bearer abcde12345".
-
-// TODO: Above security definition is not working
 func main() {
 	// Initialize database connection
 	dbConfig := config.NewDBConfig()
@@ -43,7 +33,7 @@ func main() {
 
 	// Initialize auth service
 	authService := auth.New(config.AuthConfig{
-		Secret: "your-secret-key", // TODO: Load from environment/config
+		Secret: "your-secret-key-here", // TODO: Load from environment/config
 	})
 
 	// Initialize user service

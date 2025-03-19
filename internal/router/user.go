@@ -11,8 +11,6 @@ type userRouteProvider struct {
 	userHandler *handler.UserHandler
 }
 
-// TODO:
-
 func NewUserRouteProvider(userHandler *handler.UserHandler) *userRouteProvider {
 	return &userRouteProvider{
 		userHandler: userHandler,
