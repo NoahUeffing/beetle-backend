@@ -51,6 +51,10 @@ CREATE TABLE users (
 	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	deleted_at TIMESTAMP
 );
+
+-- Create index for case-insensitive email lookups
+CREATE INDEX users_email_lower_idx ON users (LOWER(email));
+
 SELECT autoupdate_timestamp('users');
 -- +goose StatementEnd
 

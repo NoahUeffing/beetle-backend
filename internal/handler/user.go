@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 type UserHandler struct {
@@ -61,4 +62,35 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 
 	// Return created user
 	return c.JSON(http.StatusCreated, user)
+}
+
+// GetUser godoc
+// @Summary Get a user by ID
+// @Description Get a user's details by their ID
+// @Tags user
+// @Accept json
+// @Produce json
+// @Security JWTToken
+// @Param id path string true "User ID"
+// @Success 200 {object} domain.User
+// @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "User not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /v1/user/{id} [get]
+func (h *UserHandler) GetUser(c echo.Context) error {
+	id := c.Param("id")
+	if id == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "User ID is required"})
+	}
+
+	user, err := h.userService.GetUser(id)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.JSON(http.StatusNotFound, map[string]string{"error": "User not found"})
+		}
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve user"})
+	}
+
+	return c.JSON(http.StatusOK, user)
 }

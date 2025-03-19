@@ -1,5 +1,14 @@
 package handler
 
+import (
+	"beetle/internal/domain"
+	"beetle/internal/postgres"
+	"database/sql"
+	"net/http"
+
+	"github.com/labstack/echo"
+)
+
 func GetHeader(c Context, key string) string {
 	return c.Request().Header.Get(key)
 }
@@ -16,7 +25,6 @@ func GetHeader(c Context, key string) string {
 // @Failure 500 {string} string "Internal server error"
 // @Router /v1/tokens [post]
 func AuthTokenCreate(c Context) error {
-	/* TODO: Implement
 	i := &domain.UserAuthInput{}
 	if err := c.Bind(i); err != nil {
 		return err
@@ -40,12 +48,10 @@ func AuthTokenCreate(c Context) error {
 		return err
 	}
 
-	t, err := c.UserService.CreateAuthToken(m, sci)
+	t, err := c.UserService.CreateAuthToken(m)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(http.StatusOK, t)
-	*/
-	return nil
 }

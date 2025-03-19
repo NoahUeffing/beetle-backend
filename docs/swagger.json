@@ -119,11 +119,70 @@
                     }
                 }
             }
+        },
+        "/v1/user/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "JWTToken": []
+                    }
+                ],
+                "description": "Get a user's details by their ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get a user by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
         "domain.User": {
             "type": "object",
+            "required": [
+                "id",
+                "updated_at"
+            ],
             "properties": {
                 "city": {
                     "type": "string"
@@ -135,9 +194,6 @@
                     "type": "string"
                 },
                 "date_of_birth": {
-                    "type": "string"
-                },
-                "deleted_at": {
                     "type": "string"
                 },
                 "email": {

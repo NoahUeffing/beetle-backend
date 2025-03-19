@@ -26,5 +26,5 @@ func (r *userRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config)
 
 func (r *userRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {
 	// Private user routes (requiring authentication)
-	// None for now
+	g.GET("/user/:id", r.userHandler.GetUser)
 }
