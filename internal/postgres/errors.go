@@ -8,9 +8,14 @@ import (
 )
 
 var (
-	ErrEntityNotFound     = errors.New("entity was not found")
-	ErrEntityNonUnique    = errors.New("the entity you are trying to create already exists")
-	ErrInvalidCredentials = errors.New("email or password invalid")
+	ErrEntityVersionConflict  = errors.New("entity submitted is out of date")
+	ErrEntityNotFound         = errors.New("entity was not found")
+	ErrEntityNonUnique        = errors.New("the entity you are trying to create already exists")
+	ErrInvalidCredentials     = errors.New("email or password invalid")
+	ErrEmailAlreadyAssociated = errors.New("email is already associated with member")
+	ErrProfaneString          = errors.New("non-profane string could not be created")
+	ErrReadingEntity          = errors.New("error reading entity")
+	ErrInvalidAction          = errors.New("invalid action")
 )
 
 func ConvertErrorIfNeeded(err error) error {

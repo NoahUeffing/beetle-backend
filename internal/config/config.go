@@ -8,8 +8,13 @@ type Config struct {
 	Env          string
 	MigrationDir string
 	Logs         LogsConfig
-	DB           DBConfig
+	DB           DBsConfig
 	Auth         AuthConfig
+}
+
+type DBsConfig struct {
+	Write string // DB Connection String
+	Read  string // DB Connection String
 }
 
 type LogsConfig struct {

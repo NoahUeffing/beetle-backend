@@ -11,27 +11,49 @@ services:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_NAME:-beetle}
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+      BEETLE_DB_WRITE: "host=database port=5432 user=postgres password=postgres dbname=beetle sslmode=disable"
+      BEETLE_DB_READ: "host=database port=5432 user=postgres password=postgres dbname=beetle sslmode=disable"
     ports:
       - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./assets/db/migrations:/docker-entrypoint-initdb.d
+      - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
 
-  adminer:
+  adminer: # Visit localhost:18080 for simple db admin tool
+    profiles: ["db", "all"]
     image: adminer
-    container_name: beetle_adminer
-    profiles:
-      - db
-      - all
-    ports:
-      - "18080:8080"
+    restart: always
     depends_on:
-      - db
+      - "db"
+    links:
+      - "db:database"
+    ports:
+      - 18080:8080
+  
+  server:
+    profiles: ["server", "all"]
+    image: beetle
+    depends_on:
+      - "db"
+    links:
+      - "db:database"
+    environment:
+      BEETLE_ENV: dev
+      BEETLE_DB_WRITE: "host=database port=5432 user=postgres password=postgres dbname=beetle sslmode=disable"
+      BEETLE_DB_READ: "host=database port=5432 user=postgres password=postgres dbname=beetle sslmode=disable"
+      BEETLE_JWT_SECRET: some-really-long-signing-key
+      BEETLE_MIGRATION_DIR: ./assets/db/migrations
+    ports:
+      - "8080:8080"
+
 
 volumes:
   postgres_data: 

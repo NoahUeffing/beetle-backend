@@ -1,0 +1,17 @@
+server:
+  port: 8080
+  host: "0.0.0.0"
+database:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: postgres
+  name: beetle
+  sslmode: disable
+db:
+  write: "host=localhost port=5432 user=postgres password=postgres dbname=beetle sslmode=disable"
+  read: "host=localhost port=5432 user=postgres password=postgres dbname=beetle sslmode=disable"
+log:
+  level: "info"
+  format: "json"
+migrationDir: "assets/db/migrations"

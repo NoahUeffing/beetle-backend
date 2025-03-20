@@ -1,6 +1,25 @@
 package handler
 
-func GetHeader(c Context, key string) string {
+import (
+	"beetle/internal/domain"
+	"beetle/internal/postgres"
+	"database/sql"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+)
+
+type AuthHandler struct {
+	userService domain.IUserService
+}
+
+func NewAuthHandler(userService domain.IUserService) *AuthHandler {
+	return &AuthHandler{
+		userService: userService,
+	}
+}
+
+func GetHeader(c echo.Context, key string) string {
 	return c.Request().Header.Get(key)
 }
 
@@ -15,37 +34,30 @@ func GetHeader(c Context, key string) string {
 // @Failure 400 {string} string "Bad request"
 // @Failure 500 {string} string "Internal server error"
 // @Router /v1/tokens [post]
-func AuthTokenCreate(c Context) error {
-	/* TODO: Implement
+func (h *AuthHandler) AuthTokenCreate(c echo.Context) error {
 	i := &domain.UserAuthInput{}
 	if err := c.Bind(i); err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	if formErrs := c.Validate(i); formErrs != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, formErrs)
-	}
-
-	m, err := c.UserService.ReadByEmail(i.Email)
+	m, err := h.userService.ReadByEmail(i.Email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			c.Logger().Debug("Login error: no user with email ", i.Email)
-			err = postgres.ErrInvalidCredentials
+			return echo.NewHTTPError(http.StatusUnauthorized, postgres.ErrInvalidCredentials.Error())
 		}
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	if err = c.UserService.CheckPassword(m, i.Password); err != nil {
+	if err = h.userService.CheckPassword(m, i.Password); err != nil {
 		c.Logger().Debug("Login error: password incorrect for user ", i.Email)
-		return err
+		return echo.NewHTTPError(http.StatusUnauthorized, postgres.ErrInvalidCredentials.Error())
 	}
 
-	t, err := c.UserService.CreateAuthToken(m, sci)
+	t, err := h.userService.CreateAuthToken(m)
 	if err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, t)
-	*/
-	return nil
 }

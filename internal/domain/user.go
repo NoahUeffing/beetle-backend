@@ -1,6 +1,10 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type UserAuthInput struct {
 	Email    string `json:"email" validate:"required,email"`
@@ -15,7 +19,7 @@ type UserCreateInput struct {
 }
 
 type User struct {
-	ID          string     `json:"id"`
+	Entity
 	Email       string     `json:"email" validate:"email"`
 	Password    string     `json:"-"`
 	Username    string     `json:"username"`
@@ -25,12 +29,16 @@ type User struct {
 	DateOfBirth *time.Time `json:"date_of_birth,omitempty"`
 	Country     *string    `json:"country,omitempty"`
 	City        *string    `json:"city,omitempty"`
-	CreatedAt   time.Time  `json:"created_at,omitempty"`
-	UpdatedAt   time.Time  `json:"updated_at,omitempty"`
-	DeletedAt   *time.Time `json:"deleted_at,omitempty"`
+}
+
+type UserAuthToken struct {
+	Token string `json:"token"`
 }
 
 type IUserService interface {
 	CreateUser(newUser *UserCreateInput) (*User, error)
 	CheckPassword(user *User, password string) error
+	CreateAuthToken(user *User) (*UserAuthToken, error)
+	ReadByEmail(email string) (*User, error)
+	ReadByID(id uuid.UUID) (*User, error)
 }

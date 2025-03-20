@@ -10,7 +10,7 @@ import (
 type healthcheckRouteProvider struct{}
 
 func (r *healthcheckRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
-	g.GET("/healthcheck", handler.HealthCheck)
+	g.GET("/healthcheck", WithContext(handler.HealthCheck))
 }
 
 func (r *healthcheckRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {

@@ -51,6 +51,7 @@ CREATE TABLE users (
 	updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	deleted_at TIMESTAMP
 );
+
 SELECT autoupdate_timestamp('users');
 -- +goose StatementEnd
 
