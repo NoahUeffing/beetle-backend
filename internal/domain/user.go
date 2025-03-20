@@ -2,6 +2,8 @@ package domain
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type UserAuthInput struct {
@@ -38,5 +40,5 @@ type IUserService interface {
 	CheckPassword(user *User, password string) error
 	CreateAuthToken(user *User) (*UserAuthToken, error)
 	ReadByEmail(email string) (*User, error)
-	GetUser(id string) (*User, error)
+	ReadByID(id uuid.UUID) (*User, error)
 }

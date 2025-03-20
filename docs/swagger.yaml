@@ -168,6 +168,10 @@ paths:
           description: Bad request
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
         "404":
           description: User not found
           schema:
@@ -177,7 +181,7 @@ paths:
           schema:
             type: string
       security:
-      - JWTToken: []
+      - Bearer: []
       summary: Get a user by ID
       tags:
       - user

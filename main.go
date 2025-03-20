@@ -1,65 +1,70 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	_ "beetle/docs" // Required for Swagger docs
 	"beetle/internal/auth"
 	"beetle/internal/config"
 	"beetle/internal/handler"
+	"beetle/internal/healthcheck"
 	"beetle/internal/postgres"
-	"beetle/internal/router"
+	"beetle/internal/server"
+	"beetle/internal/validation"
 
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	echoSwagger "github.com/swaggo/echo-swagger"
+	"github.com/jmoiron/sqlx"
+	"github.com/pressly/goose"
+	"gorm.io/gorm"
 )
 
+// todo: integrate api  https://health-products.canada.ca/api/documentation/lnhpd-documentation-en.html
+
 func main() {
-	// Initialize database connection
-	dbConfig := config.NewDBConfig()
-	fmt.Println("Host")
-	fmt.Println(dbConfig.Host)
-	db, err := config.NewDatabase(dbConfig)
-	if err != nil {
-		log.Fatal("Failed to connect to database:", err)
-	}
+	config := config.Load()
+	readDB, writeDB := postgres.Open(config.DB)
+	defer postgres.Close(readDB)
+	defer postgres.Close(writeDB)
+	gormReadDB, gormWriteDB := postgres.OpenGorm(config.DB)
 
-	// Initialize Echo
-	e := echo.New()
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+	// TODO: Determine how to migrate down when downgrading/rolling back
+	migrate(config.MigrationDir, writeDB)
 
-	// Initialize auth service
-	authService := auth.New(config.AuthConfig{
-		Secret: "your-secret-key-here", // TODO: Load from environment/config
-	})
+	authService := auth.New(config.Auth)
 
-	// Initialize user service
 	userService := &postgres.UserService{
-		ReadDB:      db,
-		WriteDB:     db,
+		ReadDB:      gormReadDB,
+		WriteDB:     gormWriteDB,
 		AuthService: authService,
 	}
 
-	// Initialize handlers
-	userHandler := handler.NewUserHandler(userService)
-	authHandler := handler.NewAuthHandler(userService)
+	cc := handler.ContextConfig{
+		AuthService: authService,
 
-	// Initialize router
-	appConfig := config.Config{} // Create a proper config if needed
-	r := router.New(appConfig, userHandler, authHandler)
+		UserService: userService,
 
-	// Add routes to Echo
-	r.AddRoutes(e)
+		ValidationService: *validation.New(),
+		HealthCheckServices: []healthcheck.IHealthCheckService{
+			&postgres.HealthCheckService{
+				Read:  gormReadDB,
+				Write: gormWriteDB,
+			},
+		},
+	}
 
-	// Add Swagger handler
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	s := server.New(config, cc)
+	s.Start()
+}
 
-	// Start server
-	log.Printf("Starting server on :8080")
-	if err := e.Start(":8080"); err != nil {
-		log.Fatal(err)
+func getSqlxDBFromGorm(gormDB *gorm.DB) (*sqlx.DB, error) {
+	sqlDB, err := gormDB.DB()
+	if err != nil {
+		return nil, err
+	}
+	return sqlx.NewDb(sqlDB, "postgres"), nil
+}
+
+func migrate(dir string, db *sqlx.DB) {
+	if err := goose.Run("up", db.DB, dir); err != nil {
+		log.Fatalf("Unable to complete migrations, error:\n%+v\n", err)
 	}
 }

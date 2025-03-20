@@ -2,24 +2,19 @@ package handler
 
 import (
 	"beetle/internal/domain"
-	"beetle/internal/validation"
+	"beetle/internal/postgres"
 	"log"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
-type UserHandler struct {
-	userService domain.IUserService
-	validator   *validation.Validator
-}
-
-func NewUserHandler(userService domain.IUserService) *UserHandler {
-	return &UserHandler{
-		userService: userService,
-		validator:   validation.New(),
-	}
+// TODO: Implement
+type UserCreateResponse struct {
+	domain.User
+	Token string `json:"token"`
 }
 
 // CreateUser godoc
@@ -33,7 +28,7 @@ func NewUserHandler(userService domain.IUserService) *UserHandler {
 // @Failure 400 {string} string "Bad request"
 // @Failure 500 {string} string "Internal server error"
 // @Router /v1/user [post]
-func (h *UserHandler) CreateUser(c echo.Context) error {
+func CreateUser(c Context) error {
 	var input domain.UserCreateInput
 
 	// Parse request body
@@ -42,22 +37,17 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 	}
 
 	// Validate input using the validator
-	if errors := h.validator.Validate(&input); errors != nil {
-		translatedErrors := translateErrors(h.validator, &input, errors)
-
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{
-			"error":  "Validation failed",
-			"errors": translatedErrors,
-		})
+	if errors := c.validate(&input); errors != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, errors)
 	}
 
 	// Create user
-	user, err := h.userService.CreateUser(&input)
+	user, err := c.UserService.CreateUser(&input)
 	if err != nil {
 		// TODO: Check if the error is a duplicate username or email
 		// Log the error for debugging
 		log.Printf("Error creating user: %v", err)
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to create user"})
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	// Return created user
@@ -78,18 +68,22 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 // @Failure 404 {string} string "User not found"
 // @Failure 500 {string} string "Internal server error"
 // @Router /v1/user/{id} [get]
-func (h *UserHandler) GetUser(c echo.Context) error {
-	id := c.Param("id")
-	if id == "" {
+func GetUser(c Context) error {
+	idStr := c.Param("id")
+	if idStr == "" {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "User ID is required"})
 	}
+	id, err := uuid.Parse(idStr)
+	if err != nil {
+		return postgres.ErrEntityNotFound
+	}
 
-	user, err := h.userService.GetUser(id)
+	user, err := c.UserService.ReadByID(id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return c.JSON(http.StatusNotFound, map[string]string{"error": "User not found"})
+			return echo.NewHTTPError(http.StatusNotFound, map[string]string{"error": "User not found"})
 		}
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve user"})
+		return echo.NewHTTPError(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve user"})
 	}
 
 	return c.JSON(http.StatusOK, user)

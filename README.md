@@ -140,7 +140,7 @@ If `make goose-down` isn't working and you need a clean slate with a fresh datab
 
 ```sh
 # install postgresql first with `brew install postgresql`
-PGPASSWORD=postgres psql -h localhost -p 15432 -U postgres -d beetle -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;'
+PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d beetle -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;'
 ```
 
 Then, set up the database again:

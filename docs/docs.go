@@ -135,7 +135,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "JWTToken": []
+                        "Bearer": []
                     }
                 ],
                 "description": "Get a user's details by their ID",
@@ -167,6 +167,12 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "type": "string"
                         }

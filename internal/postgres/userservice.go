@@ -6,6 +6,7 @@ import (
 
 	"strings"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -64,7 +65,7 @@ func (s *UserService) CheckPassword(user *domain.User, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 }
 
-func (us *UserService) GetUser(id string) (*domain.User, error) {
+func (us *UserService) ReadByID(id uuid.UUID) (*domain.User, error) {
 	var user domain.User
 	if err := us.ReadDB.Where("id = ?", id).First(&user).Error; err != nil {
 		return nil, err
