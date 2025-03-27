@@ -12,7 +12,7 @@ import (
 // @Produce json
 // @Success 200 {object} healthcheck.Status
 // @Failure 503 {object} healthcheck.Status
-// @Router /v1/healthcheck [get]
+// @Router /healthcheck [get]
 func HealthCheck(c Context) error {
 	result := []healthcheck.Status{}
 	allUp := true

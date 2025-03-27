@@ -14,8 +14,15 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/pressly/goose"
-	"gorm.io/gorm"
 )
+
+// @title Beetle API
+// @version 1.0
+
+// @BasePath /v1
+// @securityDefinitions.apikey JWTToken
+// @in header
+// @name Authorization
 
 // todo: integrate api  https://health-products.canada.ca/api/documentation/lnhpd-documentation-en.html
 
@@ -38,10 +45,8 @@ func main() {
 	}
 
 	cc := handler.ContextConfig{
-		AuthService: authService,
-
-		UserService: userService,
-
+		AuthService:       authService,
+		UserService:       userService,
 		ValidationService: *validation.New(),
 		HealthCheckServices: []healthcheck.IHealthCheckService{
 			&postgres.HealthCheckService{
@@ -53,14 +58,6 @@ func main() {
 
 	s := server.New(config, cc)
 	s.Start()
-}
-
-func getSqlxDBFromGorm(gormDB *gorm.DB) (*sqlx.DB, error) {
-	sqlDB, err := gormDB.DB()
-	if err != nil {
-		return nil, err
-	}
-	return sqlx.NewDb(sqlDB, "postgres"), nil
 }
 
 func migrate(dir string, db *sqlx.DB) {

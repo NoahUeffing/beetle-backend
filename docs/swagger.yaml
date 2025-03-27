@@ -1,3 +1,4 @@
+basePath: /v1
 definitions:
   domain.User:
     properties:
@@ -67,8 +68,10 @@ definitions:
     type: object
 info:
   contact: {}
+  title: Beetle API
+  version: "1.0"
 paths:
-  /v1/healthcheck:
+  /healthcheck:
     get:
       operationId: v1-healthcheck
       produces:
@@ -86,7 +89,7 @@ paths:
         internal services
       tags:
       - test
-  /v1/tokens:
+  /tokens:
     post:
       description: Creates a new JWT auth token bearing the user's identity, which
         should be used to authorize further requests.
@@ -116,7 +119,7 @@ paths:
       summary: Get a new authorization token via email and password
       tags:
       - auth
-  /v1/user:
+  /user:
     post:
       consumes:
       - application/json
@@ -146,7 +149,7 @@ paths:
       summary: Create a new user
       tags:
       - user
-  /v1/user/{id}:
+  /user/{id}:
     get:
       consumes:
       - application/json
@@ -181,8 +184,13 @@ paths:
           schema:
             type: string
       security:
-      - Bearer: []
+      - JWTToken: []
       summary: Get a user by ID
       tags:
       - user
+securityDefinitions:
+  JWTToken:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
