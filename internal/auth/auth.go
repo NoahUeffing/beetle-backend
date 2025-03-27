@@ -9,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 const tokenDurationDays = 14
@@ -49,8 +50,13 @@ func (a *Auth) buildToken(claims *CombinedClaims) (string, error) {
 	return token.SignedString([]byte(a.Config.Secret))
 }
 
+func authSkipper(c echo.Context) bool {
+	return middleware.DefaultSkipper(c)
+}
+
 func (a *Auth) GetMiddleware() echo.MiddlewareFunc {
 	return echojwt.WithConfig(echojwt.Config{
+		Skipper:       authSkipper,
 		SigningKey:    []byte(a.Config.Secret),
 		NewClaimsFunc: func(c echo.Context) jwt.Claims { return &CombinedClaims{} },
 	})

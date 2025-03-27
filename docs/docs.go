@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/v1/healthcheck": {
+        "/healthcheck": {
             "get": {
                 "produces": [
                     "application/json"
@@ -41,7 +41,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/tokens": {
+        "/tokens": {
             "post": {
                 "description": "Creates a new JWT auth token bearing the user's identity, which should be used to authorize further requests.",
                 "produces": [
@@ -85,7 +85,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user": {
+        "/user": {
             "post": {
                 "description": "Create a new user with the provided details",
                 "consumes": [
@@ -131,11 +131,11 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/user/{id}": {
+        "/user/{id}": {
             "get": {
                 "security": [
                     {
-                        "Bearer": []
+                        "JWTToken": []
                     }
                 ],
                 "description": "Get a user's details by their ID",
@@ -292,16 +292,23 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "JWTToken": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "1.0",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/v1",
 	Schemes:          []string{},
-	Title:            "",
+	Title:            "Beetle API",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

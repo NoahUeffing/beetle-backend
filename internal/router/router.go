@@ -29,19 +29,17 @@ func New(config config.Config) *Router {
 }
 
 // AddRoutes adds all routes to the Echo instance
-func (r *Router) AddRoutes(e *echo.Echo, authMiddlewares ...echo.MiddlewareFunc) {
-	v1public := e.Group("/v1")
-	v1private := e.Group("/v1", authMiddlewares...)
+func (r *Router) AddRoutes(server *echo.Echo, authMiddlewares ...echo.MiddlewareFunc) {
+	v1public := server.Group("/v1")
+	v1private := server.Group("/v1", authMiddlewares...)
 
-	// Add public routes
-	for _, rp := range r.RouteProviders {
-		rp.AddPublicRoutes(v1public, r.Config)
-	}
-
-	// Add private routes
 	for _, rp := range r.RouteProviders {
 		rp.AddPrivateRoutes(v1private, r.Config)
 	}
 
-	AddSwaggerRoutes(e, r.Config)
+	for _, rp := range r.RouteProviders {
+		rp.AddPublicRoutes(v1public, r.Config)
+	}
+
+	AddSwaggerRoutes(server, r.Config)
 }

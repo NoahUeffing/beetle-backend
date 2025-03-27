@@ -27,7 +27,7 @@ type UserCreateResponse struct {
 // @Success 201 {object} domain.User
 // @Failure 400 {string} string "Bad request"
 // @Failure 500 {string} string "Internal server error"
-// @Router /v1/user [post]
+// @Router /user [post]
 func CreateUser(c Context) error {
 	var input domain.UserCreateInput
 
@@ -60,14 +60,14 @@ func CreateUser(c Context) error {
 // @Tags user
 // @Accept json
 // @Produce json
-// @Security Bearer
 // @Param id path string true "User ID"
 // @Success 200 {object} domain.User
 // @Failure 400 {string} string "Bad request"
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 404 {string} string "User not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /v1/user/{id} [get]
+// @Router /user/{id} [get]
+// @Security JWTToken
 func GetUser(c Context) error {
 	idStr := c.Param("id")
 	if idStr == "" {

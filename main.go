@@ -17,6 +17,14 @@ import (
 	"gorm.io/gorm"
 )
 
+// @title Beetle API
+// @version 1.0
+
+// @BasePath /v1
+// @securityDefinitions.apikey JWTToken
+// @in header
+// @name Authorization
+
 // todo: integrate api  https://health-products.canada.ca/api/documentation/lnhpd-documentation-en.html
 
 func main() {
@@ -38,10 +46,8 @@ func main() {
 	}
 
 	cc := handler.ContextConfig{
-		AuthService: authService,
-
-		UserService: userService,
-
+		AuthService:       authService,
+		UserService:       userService,
 		ValidationService: *validation.New(),
 		HealthCheckServices: []healthcheck.IHealthCheckService{
 			&postgres.HealthCheckService{

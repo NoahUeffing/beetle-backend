@@ -1,10 +1,13 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "title": "Beetle API",
+        "contact": {},
+        "version": "1.0"
     },
+    "basePath": "/v1",
     "paths": {
-        "/v1/healthcheck": {
+        "/healthcheck": {
             "get": {
                 "produces": [
                     "application/json"
@@ -30,7 +33,7 @@
                 }
             }
         },
-        "/v1/tokens": {
+        "/tokens": {
             "post": {
                 "description": "Creates a new JWT auth token bearing the user's identity, which should be used to authorize further requests.",
                 "produces": [
@@ -74,7 +77,7 @@
                 }
             }
         },
-        "/v1/user": {
+        "/user": {
             "post": {
                 "description": "Create a new user with the provided details",
                 "consumes": [
@@ -120,11 +123,11 @@
                 }
             }
         },
-        "/v1/user/{id}": {
+        "/user/{id}": {
             "get": {
                 "security": [
                     {
-                        "Bearer": []
+                        "JWTToken": []
                     }
                 ],
                 "description": "Get a user's details by their ID",
@@ -280,6 +283,13 @@
                     "type": "boolean"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "JWTToken": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

@@ -7,18 +7,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type tokenRouteProvider struct {
-	authHandler *handler.AuthHandler
-}
-
-func NewTokenRouteProvider(authHandler *handler.AuthHandler) *tokenRouteProvider {
-	return &tokenRouteProvider{
-		authHandler: authHandler,
-	}
-}
+type tokenRouteProvider struct{}
 
 func (r *tokenRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
-	g.POST("/tokens", r.authHandler.AuthTokenCreate)
+	g.POST("/tokens", WithContext(handler.AuthTokenCreate))
 }
 
 func (r *tokenRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {
