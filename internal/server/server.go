@@ -17,14 +17,13 @@ type Server struct {
 	Config config.Config
 }
 
-// @title Beetle API
+// @title BEETLE API
 // @version 1.0
 
 // @BasePath /v1
-// @securityDefinitions.apikey Bearer
+// @securityDefinitions.apikey JWTToken
 // @in header
 // @name Authorization
-// @description Enter the token with the `Bearer: ` prefix, e.g. "Bearer abcde12345".
 
 // TODO: Above security definition is not working, auth does not work with curl either
 
