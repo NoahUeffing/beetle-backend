@@ -10,7 +10,8 @@ const (
 )
 
 type ProductLicense struct {
-	ID                    int       `json:"id"`
+	Entity
+	LNHPDID               int       `json:"lnhpd_id"`
 	LicenseNumber         int       `json:"license_number"`
 	LicenseDate           time.Time `json:"license_date"`
 	RevisedDate           time.Time `json:"revised_date"`
@@ -27,10 +28,4 @@ type ProductLicense struct {
 	FlagPrimaryName       bool      `json:"flag_primary_name"`
 	FlagProductStatus     bool      `json:"flag_product_status"`
 	FlagAttestedMonograph bool      `json:"flag_attested_monograph"`
-}
-
-type Product struct {
-	ID            int    `json:"id"`
-	ProductNameID int    `json:"product_name_id"`
-	ProductName   string `json:"product_name"`
 }
