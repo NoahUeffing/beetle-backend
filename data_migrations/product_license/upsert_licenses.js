@@ -1,3 +1,5 @@
+// TODO: Update to use new db structure
+
 require("dotenv").config();
 const { Pool } = require("pg");
 const fs = require("fs");
