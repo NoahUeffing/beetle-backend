@@ -23,6 +23,7 @@ func New(config config.Config) *Router {
 			&tokenRouteProvider{},
 			&healthcheckRouteProvider{},
 			&userRouteProvider{},
+			&productRouteProvider{},
 		},
 		Config: config,
 	}

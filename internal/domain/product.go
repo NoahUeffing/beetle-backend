@@ -1,6 +1,10 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 const (
 	HealthCanadaBaseProductURL = "https://health-products.canada.ca/api/natural-licences/"
@@ -8,6 +12,17 @@ const (
 	ProductURLID               = "&id="
 	ProductURLPageNumber       = "&page="
 )
+
+type DosageForm struct {
+	Entity
+	Name string `json:"name_id"`
+}
+
+type SubmissionType struct {
+	Entity
+	Code        int    `json:"code"`
+	Description string `json:"description"`
+}
 
 type ProductLicense struct {
 	Entity
@@ -19,13 +34,14 @@ type ProductLicense struct {
 	DateStart             time.Time `json:"date_start"`
 	ProductNameID         int       `json:"product_name_id"`
 	ProductName           string    `json:"product_name"`
-	DosageForm            string    `json:"dosage_form"`
-	CompanyID             int       `json:"company_id"`
-	CompanyName           string    `json:"company_name"`
-	CompanyNameID         int       `json:"company_name_id"`
-	SubSubmissionTypeCode int       `json:"sub_submission_type_code"`
-	SubSubmissionTypeDesc string    `json:"sub_submission_type_desc"`
+	DosageFormID          uuid.UUID `json:"dosage_form_id"`
+	CompanyID             uuid.UUID `json:"company_id"`
+	SubmissionTypeID      uuid.UUID `json:"submission_type_id"`
 	FlagPrimaryName       bool      `json:"flag_primary_name"`
 	FlagProductStatus     bool      `json:"flag_product_status"`
 	FlagAttestedMonograph bool      `json:"flag_attested_monograph"`
+}
+
+type IProductService interface {
+	ReadLicenseByID(id uuid.UUID) (*ProductLicense, error)
 }

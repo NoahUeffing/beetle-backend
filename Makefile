@@ -57,6 +57,11 @@ install-dev-tools:
 
 # Run the application with hot reload
 watch: install-dev-tools
+	@echo "Starting application with hot reload..."
+	@echo "Swagger documentation will be automatically updated on file changes"
+	@(while true; do \
+		find . -name "*.go" | grep -v "/vendor/" | grep -v "/tmp/" | entr -d make swag; \
+	done) &
 	@BEETLE_CONFIG_FILE=$(DEVELOPMENT_CONFIG) air
 
 # Run the application with hot reload and Swagger documentation generation

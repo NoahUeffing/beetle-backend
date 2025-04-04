@@ -38,15 +38,17 @@ func main() {
 
 	authService := auth.New(config.Auth)
 
-	userService := &postgres.UserService{
-		ReadDB:      gormReadDB,
-		WriteDB:     gormWriteDB,
-		AuthService: authService,
-	}
-
 	cc := handler.ContextConfig{
-		AuthService:       authService,
-		UserService:       userService,
+		AuthService: authService,
+		UserService: &postgres.UserService{
+			ReadDB:      gormReadDB,
+			WriteDB:     gormWriteDB,
+			AuthService: authService,
+		},
+		ProductService: &postgres.ProductService{
+			ReadDB:  gormReadDB,
+			WriteDB: gormWriteDB,
+		},
 		ValidationService: *validation.New(),
 		HealthCheckServices: []healthcheck.IHealthCheckService{
 			&postgres.HealthCheckService{
