@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE submission_type (
+CREATE TABLE submission_types (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code INT NOT NULL UNIQUE,
     description TEXT NOT NULL,
@@ -8,23 +8,23 @@ CREATE TABLE submission_type (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP
 );
-SELECT autoupdate_timestamp('submission_type');
+SELECT autoupdate_timestamp('submission_types');
 
-COMMENT ON TABLE submission_type IS 'Submission types from the Canadian Food Inspection Agency (CFIA)';
-COMMENT ON COLUMN submission_type.code IS 'The submission type code from the Canadian Food Inspection Agency (CFIA)';
-COMMENT ON COLUMN submission_type.description IS 'The submission type description from the Canadian Food Inspection Agency (CFIA)';
+COMMENT ON TABLE submission_types IS 'Submission types from the Canadian Food Inspection Agency (CFIA)';
+COMMENT ON COLUMN submission_types.code IS 'The submission type code from the Canadian Food Inspection Agency (CFIA)';
+COMMENT ON COLUMN submission_types.description IS 'The submission type description from the Canadian Food Inspection Agency (CFIA)';
 
 ALTER TABLE product_license
-ADD COLUMN new_submission_type_id UUID REFERENCES submission_type(id);
+ADD COLUMN new_submission_type_id UUID REFERENCES submission_types(id);
 
-INSERT INTO submission_type (code, description)
+INSERT INTO submission_types (code, description)
 SELECT DISTINCT sub_submission_type_code, sub_submission_type_desc
 FROM product_license
 WHERE sub_submission_type_code IS NOT NULL;
 
 UPDATE product_license pl
 SET new_submission_type_id = st.id
-FROM submission_type st
+FROM submission_types st
 WHERE pl.sub_submission_type_code = st.code;
 
 ALTER TABLE product_license
@@ -54,11 +54,11 @@ UPDATE product_license pl
 SET 
     sub_submission_type_code = st.code,
     sub_submission_type_desc = st.description
-FROM submission_type st
+FROM submission_types st
 WHERE pl.new_submission_type_id = st.id;
 
 ALTER TABLE product_license
 DROP COLUMN new_submission_type_id;
 
-DROP TABLE submission_type;
+DROP TABLE submission_types;
 -- +goose StatementEnd

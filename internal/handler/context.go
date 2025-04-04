@@ -20,4 +20,5 @@ type ContextConfig struct {
 	UserService         domain.IUserService
 	ValidationService   validation.Validator
 	HealthCheckServices []healthcheck.IHealthCheckService
+	ProductService      domain.IProductService
 }

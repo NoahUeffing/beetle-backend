@@ -1,5 +1,45 @@
 basePath: /v1
 definitions:
+  domain.ProductLicense:
+    properties:
+      company_id:
+        type: string
+      created_at:
+        type: string
+      date_start:
+        type: string
+      dosage_form_id:
+        type: string
+      flag_attested_monograph:
+        type: boolean
+      flag_primary_name:
+        type: boolean
+      flag_product_status:
+        type: boolean
+      id:
+        type: string
+      license_date:
+        type: string
+      license_number:
+        type: integer
+      lnhpd_id:
+        type: integer
+      product_name:
+        type: string
+      product_name_id:
+        type: integer
+      revised_date:
+        type: string
+      submission_type_id:
+        type: string
+      time_receipt:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - id
+    - updated_at
+    type: object
   domain.User:
     properties:
       city:
@@ -89,6 +129,43 @@ paths:
         internal services
       tags:
       - test
+  /product/license/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a product license details from ID
+      parameters:
+      - description: Product License ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.ProductLicense'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: License not found
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Get a product license by ID
+      tags:
+      - product
   /tokens:
     post:
       description: Creates a new JWT auth token bearing the user's identity, which
