@@ -56,6 +56,7 @@ install-dev-tools:
 	@echo "Note: For swagger-watch, you need to install entr: brew install entr (macOS) or apt-get install entr (Linux)"
 
 # Run the application with hot reload
+# TODO: Fix this from reloading swagger constantly
 watch: install-dev-tools
 	@echo "Starting application with hot reload..."
 	@echo "Swagger documentation will be automatically updated on file changes"
