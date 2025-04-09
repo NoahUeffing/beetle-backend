@@ -1,10 +1,10 @@
 package server
 
 import (
-	_ "beetle/docs" // Required for Swagger docs
 	"beetle/internal/config"
 	"beetle/internal/handler"
 	"beetle/internal/router"
+	_ "beetle/swaggergenerated" // Required for Swagger docs
 	"net/http"
 	"strings"
 
