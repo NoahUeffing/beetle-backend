@@ -8,3 +8,5 @@ swagger.yaml
 .DS_Store
 node_modules/
 configs/dev.yaml
+swaggergenerated/
+bin/
