@@ -48,8 +48,17 @@ jobs:
         run: |
           go install honnef.co/go/tools/cmd/staticcheck@latest
           make staticcheck
+      - name: Run tests
+        run: make test
       - name: Test & gen cov report
         run: make coverage-report
+      - name: Check coverage threshold
+        run: |
+          COVERAGE=$(go tool cover -func=coveragereport.out | grep total | awk '{print $3}' | sed 's/%//')
+          if (( $(echo "$COVERAGE < 80" | bc -l) )); then
+            echo "Coverage is below 80%: $COVERAGE%"
+            exit 1
+          fi
       - name: Upload coverage report
         uses: actions/upload-artifact@v4.3.3
         with:
