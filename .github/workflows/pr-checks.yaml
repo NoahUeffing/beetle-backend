@@ -48,6 +48,14 @@ jobs:
         run: |
           go install honnef.co/go/tools/cmd/staticcheck@latest
           make staticcheck
+      - name: Test & gen cov report
+        run: make coverage-ci
+      - name: Publish code coverage
+        uses: paambaati/codeclimate-action@v9.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CODECLIMATE_TEST_REPORTER_ID}}
+        with:
+          coverageLocations: ${{github.workspace}}/coveragereport.out:gocov
   goose-checks:
     name: Goose Checks
     runs-on: ubuntu-latest
