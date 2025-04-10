@@ -25,8 +25,6 @@ type Server struct {
 // @in header
 // @name Authorization
 
-// TODO: Above security definition is not working, auth does not work with curl either
-
 func New(config *config.Config, contextConfig handler.ContextConfig) *Server {
 	s := &Server{
 		Echo:   echo.New(),
