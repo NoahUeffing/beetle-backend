@@ -11,7 +11,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// TODO: Implement
 type UserCreateResponse struct {
 	domain.User
 	Token string `json:"token"`
@@ -31,27 +30,31 @@ type UserCreateResponse struct {
 func CreateUser(c Context) error {
 	var input domain.UserCreateInput
 
-	// Parse request body
 	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request body"})
 	}
 
-	// Validate input using the validator
 	if errors := c.validate(&input); errors != nil {
 		return echo.NewHTTPError(http.StatusBadRequest, errors)
 	}
 
-	// Create user
 	user, err := c.UserService.CreateUser(&input)
-	if err != nil {
-		// TODO: Check if the error is a duplicate username or email
-		// Log the error for debugging
+	if err == postgres.ErrUsernameTaken || err == postgres.ErrEmailAlreadyAssociated {
 		log.Printf("Error creating user: %v", err)
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	} else if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	// Return created user
-	return c.JSON(http.StatusCreated, user)
+	token, err := c.UserService.CreateAuthToken(user)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, &UserCreateResponse{
+		User:  *user,
+		Token: token.Token,
+	})
 }
 
 // GetUser godoc

@@ -3,7 +3,6 @@ package postgres
 import (
 	"beetle/internal/auth"
 	"beetle/internal/domain"
-
 	"strings"
 
 	"github.com/google/uuid"
@@ -17,24 +16,27 @@ type UserService struct {
 	AuthService auth.IAuthService
 }
 
-// CreateUser implements the domain.IUserService interface
 func (s *UserService) CreateUser(input *domain.UserCreateInput) (*domain.User, error) {
-	// Hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
 	}
 
-	// Create a new user from the input
 	user := &domain.User{
 		Username: input.Username,
 		Email:    strings.ToLower(input.Email),
-		Password: string(hashedPassword), // Store the hashed password
+		Password: string(hashedPassword),
 	}
 
-	// Save the user to the database and return all fields
 	if err := s.WriteDB.Select("*").Create(user).Error; err != nil {
-		// TODO: Check if the error is a duplicate username or email
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			if strings.Contains(err.Error(), "users_username_key") {
+				return nil, ErrUsernameTaken
+			}
+			if strings.Contains(err.Error(), "users_email_key") {
+				return nil, ErrEmailAlreadyAssociated
+			}
+		}
 		return nil, err
 	}
 
@@ -60,7 +62,6 @@ func (us *UserService) CreateAuthToken(u *domain.User) (*domain.UserAuthToken, e
 	return &domain.UserAuthToken{Token: ts}, err
 }
 
-// CheckPassword verifies if the provided password matches the stored hash
 func (s *UserService) CheckPassword(user *domain.User, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 }
