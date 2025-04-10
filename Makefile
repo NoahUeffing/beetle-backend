@@ -69,7 +69,7 @@ swag:
 	@$(GO_PATH)/bin/swag init -g ./internal/server/server.go -o ./swaggergenerated --parseInternal --generatedTime
 
 fmt:
-	@$(GO_PATH)/bin/gofmt -s -w .
+	@gofmt -s -w .
 
 clean:
 	rm -rf bin/*
