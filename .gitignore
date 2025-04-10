@@ -1,12 +1,10 @@
 coveragereport.out
 data_migrations/product_license/productlicense.json
 tmp/
-swagger.json
-swagger.yaml
 .env
 .vscode/*
 .DS_Store
 node_modules/
 configs/dev.yaml
-swaggergenerated/
-bin/
+swaggergenerated
+bin
