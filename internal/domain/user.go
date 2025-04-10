@@ -20,15 +20,15 @@ type UserCreateInput struct {
 
 type User struct {
 	Entity
-	Email       string     `json:"email" validate:"email"`
-	Password    string     `json:"-"`
-	Username    string     `json:"username"`
-	FirstName   *string    `json:"first_name,omitempty"`
-	LastName    *string    `json:"last_name,omitempty"`
-	Gender      *string    `json:"gender,omitempty"`
-	DateOfBirth *time.Time `json:"date_of_birth,omitempty"`
-	Country     *string    `json:"country,omitempty"`
-	City        *string    `json:"city,omitempty"`
+	Email       string         `json:"email" validate:"email"`
+	Password    string         `json:"-"`
+	Username    string         `json:"username"`
+	FirstName   NullableString `json:"first_name,omitempty"`
+	LastName    NullableString `json:"last_name,omitempty"`
+	Gender      NullableString `json:"gender,omitempty"`
+	DateOfBirth *time.Time     `json:"date_of_birth,omitempty"`
+	Country     NullableString `json:"country,omitempty"`
+	City        NullableString `json:"city,omitempty"`
 }
 
 type UserAuthToken struct {
