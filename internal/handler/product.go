@@ -25,7 +25,7 @@ import (
 func GetProductLicense(c Context) error {
 	idStr := c.Param("id")
 	if idStr == "" {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "User ID is required"})
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Product License ID is required"})
 	}
 	id, err := uuid.Parse(idStr)
 	if err != nil {

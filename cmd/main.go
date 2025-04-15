@@ -45,6 +45,10 @@ func main() {
 			WriteDB:     gormWriteDB,
 			AuthService: authService,
 		},
+		CompanyService: &postgres.CompanyService{
+			ReadDB:  gormReadDB,
+			WriteDB: gormWriteDB,
+		},
 		ProductService: &postgres.ProductService{
 			ReadDB:  gormReadDB,
 			WriteDB: gormWriteDB,

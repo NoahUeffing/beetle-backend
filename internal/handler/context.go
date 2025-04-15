@@ -18,6 +18,7 @@ type Context struct {
 type ContextConfig struct {
 	AuthService         auth.IAuthService
 	UserService         domain.IUserService
+	CompanyService      domain.ICompanyService
 	ValidationService   validation.Validator
 	HealthCheckServices []healthcheck.IHealthCheckService
 	ProductService      domain.IProductService
