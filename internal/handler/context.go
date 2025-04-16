@@ -12,7 +12,8 @@ import (
 type Context struct {
 	echo.Context
 	ContextConfig
-	User *domain.User
+	User            *domain.User
+	PaginationQuery *domain.PaginationQuery
 }
 
 type ContextConfig struct {
