@@ -42,3 +42,47 @@ func GetProductLicense(c Context) error {
 
 	return c.JSON(http.StatusOK, user)
 }
+
+// GetDosageForms godoc
+// @Summary Get all possible dosage forms for a product
+// @Description Get all possible dosage forms for a product license
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number (default: 1)"
+// @Param limit query int false "Number of items per page (default: 12, max: 120)"
+// @Success 200 {object} domain.PaginatedResults
+// @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /product/dosage-forms [get]
+func GetDosageForms(c Context) error {
+	dosageForms, err := c.ProductService.GetDosageForms(c.PaginationQuery)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve dosage forms"})
+	}
+	return c.JSON(http.StatusOK, dosageForms)
+}
+
+// GetSubmissionTypes godoc
+// @Summary Get all possible submission types for a product license
+// @Description Get all possible submission types for a product license
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number (default: 1)"
+// @Param limit query int false "Number of items per page (default: 12, max: 120)"
+// @Success 200 {object} domain.PaginatedResults
+// @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /product/license/submission-types [get]
+func GetSubmissionTypes(c Context) error {
+	submissionTypes, err := c.ProductService.GetSubmissionTypes(c.PaginationQuery)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve submission types"})
+	}
+	return c.JSON(http.StatusOK, submissionTypes)
+}
