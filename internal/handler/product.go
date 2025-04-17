@@ -1,10 +1,8 @@
 package handler
 
 import (
-	"beetle/internal/postgres"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
@@ -23,13 +21,9 @@ import (
 // @Failure 500 {string} string "Internal server error"
 // @Router /product/license/{id} [get]
 func GetProductLicense(c Context) error {
-	idStr := c.Param("id")
-	if idStr == "" {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Product License ID is required"})
-	}
-	id, err := uuid.Parse(idStr)
+	id, err := parseUUID(c.Param("id"))
 	if err != nil {
-		return postgres.ErrEntityNotFound
+		return err
 	}
 
 	user, err := c.ProductService.ReadLicenseByID(id)
@@ -41,6 +35,28 @@ func GetProductLicense(c Context) error {
 	}
 
 	return c.JSON(http.StatusOK, user)
+}
+
+// GetLicenses godoc
+// @Summary Get all product licenses
+// @Description Get all product licenses
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number (default: 1)"
+// @Param limit query int false "Number of items per page (default: 12, max: 120)"
+// @Success 200 {object} domain.PaginatedResults
+// @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /product/licenses [get]
+func GetLicenses(c Context) error {
+	licenses, err := c.ProductService.GetLicenses(c.PaginationQuery)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve licenses"})
+	}
+	return c.JSON(http.StatusOK, licenses)
 }
 
 // GetDosageForms godoc
@@ -65,6 +81,31 @@ func GetDosageForms(c Context) error {
 	return c.JSON(http.StatusOK, dosageForms)
 }
 
+// GetDosageFormByID godoc
+// @Summary Get a dosage form by ID
+// @Description Get a dosage form details from ID
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param id path string true "Dosage Form ID"
+// @Success 200 {object} domain.DosageForm
+// @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /product/dosage-form/{id} [get]
+func GetDosageFormByID(c Context) error {
+	id, err := parseUUID(c.Param("id"))
+	if err != nil {
+		return err
+	}
+	dosageForm, err := c.ProductService.ReadDosageFormByID(id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve dosage form"})
+	}
+	return c.JSON(http.StatusOK, dosageForm)
+}
+
 // GetSubmissionTypes godoc
 // @Summary Get all possible submission types for a product license
 // @Description Get all possible submission types for a product license
@@ -85,4 +126,29 @@ func GetSubmissionTypes(c Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve submission types"})
 	}
 	return c.JSON(http.StatusOK, submissionTypes)
+}
+
+// GetSubmissionTypeByID godoc
+// @Summary Get a submission type by ID
+// @Description Get a submission type details from ID
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param id path string true "Submission Type ID"
+// @Success 200 {object} domain.SubmissionType
+// @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /product/license/submission-type/{id} [get]
+func GetSubmissionTypeByID(c Context) error {
+	id, err := parseUUID(c.Param("id"))
+	if err != nil {
+		return err
+	}
+	submissionType, err := c.ProductService.ReadSubmissionTypeByID(id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve submission type"})
+	}
+	return c.JSON(http.StatusOK, submissionType)
 }

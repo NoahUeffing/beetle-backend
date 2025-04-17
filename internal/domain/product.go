@@ -44,6 +44,9 @@ type ProductLicense struct {
 
 type IProductService interface {
 	ReadLicenseByID(id uuid.UUID) (*ProductLicense, error)
+	GetLicenses(pi *PaginationQuery) (*PaginatedResults, error) // TODO: Add filtering and sorting
 	GetDosageForms(pi *PaginationQuery) (*PaginatedResults, error)
+	ReadDosageFormByID(id uuid.UUID) (*DosageForm, error)
 	GetSubmissionTypes(pi *PaginationQuery) (*PaginatedResults, error)
+	ReadSubmissionTypeByID(id uuid.UUID) (*SubmissionType, error)
 }
