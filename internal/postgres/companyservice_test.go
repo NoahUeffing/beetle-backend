@@ -1,3 +1,3 @@
-package postgres
+package postgres_test
 
 // TODO: Implement
