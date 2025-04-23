@@ -35,7 +35,7 @@ func (c *Config) loadFromFile() error {
 	return nil
 }
 
-func (c *Config) loadFromEnv() error {
+func (c *Config) LoadFromEnv() error {
 	c.DB.Read = env.Get("BEETLE_DB_READ", c.DB.Read)
 	c.DB.Write = env.Get("BEETLE_DB_WRITE", c.DB.Write)
 	c.Auth.Secret = env.Get("JWT_SECRET", c.Auth.Secret)
@@ -47,6 +47,6 @@ func Load() *Config {
 	c := &Config{}
 	c.Env = env.Get("ENV", "dev")
 	c.loadFromFile()
-	c.loadFromEnv()
+	c.LoadFromEnv()
 	return c
 }

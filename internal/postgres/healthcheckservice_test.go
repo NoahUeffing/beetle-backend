@@ -1,4 +1,3 @@
-// TODO: Implement
 package postgres_test
 
 import (

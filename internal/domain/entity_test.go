@@ -64,3 +64,12 @@ func TestEntityIsSameVersion_Failure(t *testing.T) {
 	is.True(e1.IsSame(e2))                // should be the same entity
 	is.Equal(e1.IsSameVersion(e2), false) // should be a different version
 }
+
+func TestEntityBeforeCreate_Success(t *testing.T) {
+	is := is.New(t)
+	entity := &domain.Entity{}
+
+	err := entity.BeforeCreate(nil)
+	is.NoErr(err)                  // should not return an error
+	is.True(entity.ID != uuid.Nil) // should have a valid UUID
+}

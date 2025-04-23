@@ -7,24 +7,24 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type routeProvider interface {
+type RouteProvider interface {
 	AddPublicRoutes(g *echo.Group, config config.Config)
 	AddPrivateRoutes(g *echo.Group, config config.Config)
 }
 
 type Router struct {
-	RouteProviders []routeProvider
+	RouteProviders []RouteProvider
 	Config         config.Config
 }
 
 func New(config config.Config) *Router {
 	return &Router{
-		RouteProviders: []routeProvider{
-			&tokenRouteProvider{},
-			&healthcheckRouteProvider{},
-			&userRouteProvider{},
-			&companyRouteProvider{},
-			&productRouteProvider{},
+		RouteProviders: []RouteProvider{
+			&TokenRouteProvider{},
+			&HealthcheckRouteProvider{},
+			&UserRouteProvider{},
+			&CompanyRouteProvider{},
+			&ProductRouteProvider{},
 		},
 		Config: config,
 	}

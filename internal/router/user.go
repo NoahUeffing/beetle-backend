@@ -7,14 +7,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type userRouteProvider struct{}
+type UserRouteProvider struct{}
 
-func (r *userRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
+func (r *UserRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
 	// Public user routes
 	g.POST("/user", WithContext(handler.CreateUser))
 }
 
-func (r *userRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {
+func (r *UserRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {
 	// Private user routes (requiring authentication)
 	g.GET("/user/:id", WithContext(handler.GetUser))
 }

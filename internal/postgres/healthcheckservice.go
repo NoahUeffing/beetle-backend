@@ -6,7 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// UserService represents a PostgreSQL implementation of myapp.UserService.
 type HealthCheckService struct {
 	Read  *gorm.DB
 	Write *gorm.DB
@@ -14,7 +13,6 @@ type HealthCheckService struct {
 
 const HEALTH_CHECK_NAME = "Postgres Database Connection"
 
-// User returns a user for a given id.
 func (hcs *HealthCheckService) Check() healthcheck.Status {
 	status := healthcheck.Status{
 		Name:     HEALTH_CHECK_NAME,

@@ -11,4 +11,5 @@ type Company struct {
 
 type ICompanyService interface {
 	ReadByID(id uuid.UUID) (*Company, error)
+	// TODO: Add read companies with pagination
 }

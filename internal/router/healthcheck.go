@@ -7,12 +7,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type healthcheckRouteProvider struct{}
+type HealthcheckRouteProvider struct{}
 
-func (r *healthcheckRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
+func (r *HealthcheckRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
 	g.GET("/healthcheck", WithContext(handler.HealthCheck))
 }
 
-func (r *healthcheckRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {
+func (r *HealthcheckRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {
 	// No private routes
 }
