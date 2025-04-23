@@ -13,8 +13,8 @@ import (
 
 func Paginate(hc *handler.Context) error {
 	hc.PaginationQuery = &domain.PaginationQuery{
-		Page:  parseIntQueryParam(hc, "page", 1),
-		Limit: parseIntQueryParam(hc, "limit", domain.PageLimitDefault),
+		Page:  ParseIntQueryParam(hc, "page", 1),
+		Limit: ParseIntQueryParam(hc, "limit", domain.PageLimitDefault),
 	}
 	if hc.PaginationQuery.Limit > domain.PageLimitMax || hc.PaginationQuery.Limit < domain.PageLimitMin {
 		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("limit must be between 1 and %d", domain.PageLimitMax))
@@ -25,7 +25,7 @@ func Paginate(hc *handler.Context) error {
 	return nil
 }
 
-func parseIntQueryParam(hc *handler.Context, name string, fallback int) int {
+func ParseIntQueryParam(hc *handler.Context, name string, fallback int) int {
 	strParam := hc.Context.QueryParam(name)
 	if strParam != "" {
 		converted, err := strconv.Atoi(strParam)

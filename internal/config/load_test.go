@@ -1,6 +1,7 @@
-package config
+package config_test
 
 import (
+	"beetle/internal/config"
 	"os"
 	"testing"
 
@@ -21,8 +22,8 @@ func TestLoadFromEnv(t *testing.T) {
 		os.Unsetenv("MIGRATION_DIR")
 	}()
 
-	config := &Config{}
-	err := config.loadFromEnv()
+	config := &config.Config{}
+	err := config.LoadFromEnv()
 	require.NoError(t, err)
 
 	assert.Equal(t, "test-read-db", config.DB.Read)

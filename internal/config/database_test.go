@@ -1,13 +1,14 @@
-package config
+package config_test
 
 import (
+	"beetle/internal/config"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDBConfig_DSN(t *testing.T) {
-	config := &DBConfig{
+	config := &config.DBConfig{
 		Host:     "localhost",
 		Port:     "5432",
 		User:     "testuser",

@@ -1,6 +1,7 @@
-package domain
+package domain_test
 
 import (
+	"beetle/internal/domain"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,12 +10,12 @@ import (
 func TestPaginationQuery_GetOffset(t *testing.T) {
 	tests := []struct {
 		name     string
-		query    PaginationQuery
+		query    domain.PaginationQuery
 		expected int
 	}{
 		{
 			name: "first page",
-			query: PaginationQuery{
+			query: domain.PaginationQuery{
 				Limit: 10,
 				Page:  1,
 			},
@@ -22,7 +23,7 @@ func TestPaginationQuery_GetOffset(t *testing.T) {
 		},
 		{
 			name: "second page",
-			query: PaginationQuery{
+			query: domain.PaginationQuery{
 				Limit: 10,
 				Page:  2,
 			},
@@ -30,7 +31,7 @@ func TestPaginationQuery_GetOffset(t *testing.T) {
 		},
 		{
 			name: "third page with custom limit",
-			query: PaginationQuery{
+			query: domain.PaginationQuery{
 				Limit: 25,
 				Page:  3,
 			},
@@ -49,12 +50,12 @@ func TestPaginationQuery_GetOffset(t *testing.T) {
 func TestPaginationQuery_CreateResults(t *testing.T) {
 	tests := []struct {
 		name           string
-		query          PaginationQuery
+		query          domain.PaginationQuery
 		expectedOffset int
 	}{
 		{
 			name: "create results with default values",
-			query: PaginationQuery{
+			query: domain.PaginationQuery{
 				Limit: 10,
 				Page:  1,
 			},
@@ -62,7 +63,7 @@ func TestPaginationQuery_CreateResults(t *testing.T) {
 		},
 		{
 			name: "create results with custom values",
-			query: PaginationQuery{
+			query: domain.PaginationQuery{
 				Limit: 20,
 				Page:  2,
 			},
@@ -83,7 +84,7 @@ func TestPaginationQuery_CreateResults(t *testing.T) {
 }
 
 func TestPaginationConstants(t *testing.T) {
-	assert.Equal(t, 120, PageLimitMax)
-	assert.Equal(t, 1, PageLimitMin)
-	assert.Equal(t, 12, PageLimitDefault)
+	assert.Equal(t, domain.PageLimitMax, 120)
+	assert.Equal(t, domain.PageLimitMin, 1)
+	assert.Equal(t, domain.PageLimitDefault, 12)
 }

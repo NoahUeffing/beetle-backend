@@ -1,6 +1,7 @@
-package domain
+package domain_test
 
 import (
+	"beetle/internal/domain"
 	"database/sql/driver"
 	"testing"
 )
@@ -9,7 +10,7 @@ func TestNullableString_Scan(t *testing.T) {
 	tests := []struct {
 		name    string
 		input   interface{}
-		want    NullableString
+		want    domain.NullableString
 		wantErr bool
 	}{
 		{
@@ -34,7 +35,7 @@ func TestNullableString_Scan(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var ns NullableString
+			var ns domain.NullableString
 			err := ns.Scan(tt.input)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NullableString.Scan() error = %v, wantErr %v", err, tt.wantErr)
@@ -50,7 +51,7 @@ func TestNullableString_Scan(t *testing.T) {
 func TestNullableString_Value(t *testing.T) {
 	tests := []struct {
 		name    string
-		ns      NullableString
+		ns      domain.NullableString
 		want    driver.Value
 		wantErr bool
 	}{

@@ -7,13 +7,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type companyRouteProvider struct{}
+type CompanyRouteProvider struct{}
 
-func (r *companyRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
+func (r *CompanyRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
 	// Public routes
 	g.GET("/company/:id", WithContext(handler.GetCompany))
 }
 
-func (r *companyRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {
+func (r *CompanyRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {
 	// Private routes (requiring authentication)
 }

@@ -8,9 +8,9 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type productRouteProvider struct{}
+type ProductRouteProvider struct{}
 
-func (r *productRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
+func (r *ProductRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
 	// Public routes
 	g.GET("/product/license/:id", WithContext(handler.GetProductLicense))
 	g.GET("/product/licenses", WithContext(handler.GetLicenses, middleware.Paginate))
@@ -20,6 +20,6 @@ func (r *productRouteProvider) AddPublicRoutes(g *echo.Group, config config.Conf
 	g.GET("/product/license/submission-type/:id", WithContext(handler.GetSubmissionTypeByID))
 }
 
-func (r *productRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {
+func (r *ProductRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {
 	// Private routes (requiring authentication)
 }
