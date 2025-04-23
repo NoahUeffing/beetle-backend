@@ -1,8 +1,10 @@
-package auth
+package auth_test
 
 import (
 	"testing"
 	"time"
+
+	"beetle/internal/auth"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -15,13 +17,13 @@ func TestCombinedClaims_Valid(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		claims  *CombinedClaims
+		claims  *auth.CombinedClaims
 		wantErr error
 	}{
 		{
 			name: "valid token",
-			claims: &CombinedClaims{
-				ClaimsData: ClaimsData{
+			claims: &auth.CombinedClaims{
+				ClaimsData: auth.ClaimsData{
 					UserId: userId,
 				},
 				RegisteredClaims: jwt.RegisteredClaims{
@@ -33,8 +35,8 @@ func TestCombinedClaims_Valid(t *testing.T) {
 		},
 		{
 			name: "expired token",
-			claims: &CombinedClaims{
-				ClaimsData: ClaimsData{
+			claims: &auth.CombinedClaims{
+				ClaimsData: auth.ClaimsData{
 					UserId: userId,
 				},
 				RegisteredClaims: jwt.RegisteredClaims{
@@ -45,8 +47,8 @@ func TestCombinedClaims_Valid(t *testing.T) {
 		},
 		{
 			name: "token not yet valid",
-			claims: &CombinedClaims{
-				ClaimsData: ClaimsData{
+			claims: &auth.CombinedClaims{
+				ClaimsData: auth.ClaimsData{
 					UserId: userId,
 				},
 				RegisteredClaims: jwt.RegisteredClaims{
@@ -57,8 +59,8 @@ func TestCombinedClaims_Valid(t *testing.T) {
 		},
 		{
 			name: "token with no time constraints",
-			claims: &CombinedClaims{
-				ClaimsData: ClaimsData{
+			claims: &auth.CombinedClaims{
+				ClaimsData: auth.ClaimsData{
 					UserId: userId,
 				},
 				RegisteredClaims: jwt.RegisteredClaims{},
