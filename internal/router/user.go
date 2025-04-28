@@ -3,6 +3,7 @@ package router
 import (
 	"beetle/internal/config"
 	"beetle/internal/handler"
+	"beetle/internal/router/middleware"
 
 	"github.com/labstack/echo/v4"
 )
@@ -16,5 +17,6 @@ func (r *UserRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config)
 
 func (r *UserRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {
 	// Private user routes (requiring authentication)
-	g.GET("/user/:id", WithContext(handler.GetUser))
+	g.GET("/user/:id", WithContext(handler.GetUser, middleware.Auth))
+	g.PUT("/user/:id", WithContext(handler.UpdateUser, middleware.Auth))
 }

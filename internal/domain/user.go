@@ -41,4 +41,8 @@ type IUserService interface {
 	CreateAuthToken(user *User) (*UserAuthToken, error)
 	ReadByEmail(email string) (*User, error)
 	ReadByID(id uuid.UUID) (*User, error)
+	Update(user *User) (*User, error)
+	// TODO: Add User Permissions
+	// TODO: Add Reset Password
+	// TODO: Add Delete User
 }

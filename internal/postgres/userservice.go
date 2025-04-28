@@ -73,3 +73,43 @@ func (us *UserService) ReadByID(id uuid.UUID) (*domain.User, error) {
 	}
 	return &user, nil
 }
+
+func (us *UserService) Update(user *domain.User) (*domain.User, error) {
+	// Get existing user record
+	existing, err := us.ReadByID(user.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if the user has been modified by another process
+	if !existing.IsSameVersion(user) {
+		return nil, ErrEntityVersionConflict
+	}
+
+	// If password is empty, keep the existing password
+	if user.Password == "" {
+		user.Password = existing.Password
+	} else if user.Password != existing.Password {
+		// Hash the new password
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, err
+		}
+		user.Password = string(hashedPassword)
+	}
+
+	// Update the user
+	if err := us.WriteDB.Save(user).Error; err != nil {
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			if strings.Contains(err.Error(), "users_username_key") {
+				return nil, ErrUsernameTaken
+			}
+			if strings.Contains(err.Error(), "users_email_key") {
+				return nil, ErrEmailAlreadyAssociated
+			}
+		}
+		return nil, err
+	}
+
+	return user, nil
+}
