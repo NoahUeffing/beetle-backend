@@ -27,3 +27,7 @@ func (pi *PaginationQuery) CreateResults() (PaginatedResults, int) {
 	offset := pi.GetOffset()
 	return results, offset
 }
+
+type IPaginationService interface {
+	Paginate(model any, results *PaginatedResults, offset int) error
+}

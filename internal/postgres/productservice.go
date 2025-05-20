@@ -8,8 +8,9 @@ import (
 )
 
 type ProductService struct {
-	ReadDB  *gorm.DB
-	WriteDB *gorm.DB
+	ReadDB            *gorm.DB
+	WriteDB           *gorm.DB
+	PaginationService domain.IPaginationService
 }
 
 func (s *ProductService) ReadLicenseByID(id uuid.UUID) (*domain.ProductLicense, error) {
@@ -24,7 +25,7 @@ func (s *ProductService) GetLicenses(pi *domain.PaginationQuery) (*domain.Pagina
 	var licenses []domain.ProductLicense
 	results, offset := pi.CreateResults()
 
-	if err := PaginateQuery(s.ReadDB, &licenses, &results, offset); err != nil {
+	if err := s.PaginationService.Paginate(&licenses, &results, offset); err != nil {
 		return nil, err
 	}
 	return &results, nil
@@ -42,7 +43,7 @@ func (s *ProductService) GetDosageForms(pi *domain.PaginationQuery) (*domain.Pag
 	var dosageForms []domain.DosageForm
 	results, offset := pi.CreateResults()
 
-	if err := PaginateQuery(s.ReadDB, &dosageForms, &results, offset); err != nil {
+	if err := s.PaginationService.Paginate(&dosageForms, &results, offset); err != nil {
 		return nil, err
 	}
 	return &results, nil
@@ -60,7 +61,7 @@ func (s *ProductService) GetSubmissionTypes(pi *domain.PaginationQuery) (*domain
 	var submissionTypes []domain.SubmissionType
 	results, offset := pi.CreateResults()
 
-	if err := PaginateQuery(s.ReadDB, &submissionTypes, &results, offset); err != nil {
+	if err := s.PaginationService.Paginate(&submissionTypes, &results, offset); err != nil {
 		return nil, err
 	}
 	return &results, nil

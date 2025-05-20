@@ -56,7 +56,7 @@ func GetCompany(c Context) error {
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 404 {string} string "Not found"
 // @Failure 500 {string} string "Internal server error"
-// @Router /companies [get]
+// @Router /company [get]
 func GetCompanies(c Context) error {
 	companies, err := c.CompanyService.GetCompanies(c.PaginationQuery)
 	if err != nil {

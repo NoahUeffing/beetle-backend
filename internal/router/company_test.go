@@ -29,6 +29,7 @@ func TestCompanyRouteProvider_AddPublicRoutes(t *testing.T) {
 		}
 	}
 	assert.True(t, found, "GET /api/company/:id route should be registered")
+	assert.True(t, found, "GET /api/company route should be registered")
 }
 
 func TestCompanyRouteProvider_AddPrivateRoutes(t *testing.T) {

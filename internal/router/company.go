@@ -13,7 +13,7 @@ type CompanyRouteProvider struct{}
 func (r *CompanyRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
 	// Public routes
 	g.GET("/company/:id", WithContext(handler.GetCompany))
-	g.GET("/companies", WithContext(handler.GetCompanies, middleware.Paginate))
+	g.GET("/company", WithContext(handler.GetCompanies, middleware.Paginate))
 }
 
 func (r *CompanyRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {

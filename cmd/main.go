@@ -38,6 +38,11 @@ func main() {
 
 	authService := auth.New(config.Auth)
 
+	PaginationService := &postgres.PaginationService{
+		ReadDB:  gormReadDB,
+		WriteDB: gormWriteDB,
+	}
+
 	cc := handler.ContextConfig{
 		AuthService: authService,
 		UserService: &postgres.UserService{
@@ -46,12 +51,14 @@ func main() {
 			AuthService: authService,
 		},
 		CompanyService: &postgres.CompanyService{
-			ReadDB:  gormReadDB,
-			WriteDB: gormWriteDB,
+			ReadDB:            gormReadDB,
+			WriteDB:           gormWriteDB,
+			PaginationService: PaginationService,
 		},
 		ProductService: &postgres.ProductService{
-			ReadDB:  gormReadDB,
-			WriteDB: gormWriteDB,
+			ReadDB:            gormReadDB,
+			WriteDB:           gormWriteDB,
+			PaginationService: PaginationService,
 		},
 		ValidationService: *validation.New(),
 		HealthCheckServices: []healthcheck.IHealthCheckService{
