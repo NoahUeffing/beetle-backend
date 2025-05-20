@@ -42,3 +42,25 @@ func GetCompany(c Context) error {
 
 	return c.JSON(http.StatusOK, user)
 }
+
+// GetCompanies godoc
+// @Summary Get all companies
+// @Description Get all companies
+// @Tags company
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number (default: 1)"
+// @Param limit query int false "Number of items per page (default: 12, max: 120)"
+// @Success 200 {object} domain.PaginatedResults
+// @Failure 400 {string} string "Bad request"
+// @Failure 401 {string} string "Unauthorized"
+// @Failure 404 {string} string "Not found"
+// @Failure 500 {string} string "Internal server error"
+// @Router /company [get]
+func GetCompanies(c Context) error {
+	companies, err := c.CompanyService.GetCompanies(c.PaginationQuery)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve companies"})
+	}
+	return c.JSON(http.StatusOK, companies)
+}

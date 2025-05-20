@@ -8,8 +8,9 @@ import (
 )
 
 type CompanyService struct {
-	ReadDB  *gorm.DB
-	WriteDB *gorm.DB
+	ReadDB            *gorm.DB
+	WriteDB           *gorm.DB
+	PaginationService domain.IPaginationService
 }
 
 func (s *CompanyService) ReadByID(id uuid.UUID) (*domain.Company, error) {
@@ -18,4 +19,14 @@ func (s *CompanyService) ReadByID(id uuid.UUID) (*domain.Company, error) {
 		return nil, err
 	}
 	return &company, nil
+}
+
+func (s *CompanyService) GetCompanies(pi *domain.PaginationQuery) (*domain.PaginatedResults, error) {
+	var companies []domain.Company
+	results, offset := pi.CreateResults()
+
+	if err := s.PaginationService.Paginate(&companies, &results, offset); err != nil {
+		return nil, err
+	}
+	return &results, nil
 }
