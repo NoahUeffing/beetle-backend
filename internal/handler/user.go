@@ -123,3 +123,37 @@ func UpdateUser(c Context) error {
 	}
 	return c.JSON(http.StatusOK, u)
 }
+
+// UserDelete godoc
+// @Summary Delete a User account
+// @Description Delete a user and remove personal info from db.
+// @ID v1-user-delete
+// @Tags user
+// @Produce json
+// @Param PasswordInput body domain.PasswordInput true "Authenticated users password"
+// @Success 200 {object} handler.Message
+// @Failure 400 {object} handler.FormValidationError
+// @Failure 403 {object} handler.Message
+// @Failure 500 {object} handler.Message
+// @Router /user/delete [put]
+// @Security JWTToken
+func UserDelete(c Context) error {
+	password := &domain.PasswordInput{}
+	if err := c.Bind(password); err != nil {
+		return err
+	}
+
+	if formErrs := c.validate(password); formErrs != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, formErrs)
+	}
+
+	if err := c.UserService.CheckPassword(c.User, password.Password); err != nil {
+		return echo.NewHTTPError(http.StatusForbidden, err)
+	}
+
+	if err := c.UserService.Delete(c.User); err != nil {
+		return err
+	}
+	c.Response().Header().Set(domain.UserHeaderAuthentication, domain.UserHeaderAuthenticatedFalse)
+	return c.JSON(http.StatusOK, Message{Message: "User deleted"})
+}

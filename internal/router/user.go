@@ -19,4 +19,5 @@ func (r *UserRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config
 	// Private user routes (requiring authentication)
 	g.GET("/user/:id", WithContext(handler.GetUser, middleware.Auth))
 	g.PUT("/user/:id", WithContext(handler.UpdateUser, middleware.Auth))
+	g.PUT("/user/delete", WithContext(handler.UserDelete, middleware.Auth))
 }

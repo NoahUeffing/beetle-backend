@@ -45,7 +45,7 @@ func (s *UserService) CreateUser(input *domain.UserCreateInput) (*domain.User, e
 
 func (us *UserService) ReadByEmail(email string) (*domain.User, error) {
 	var user domain.User
-	if err := us.ReadDB.Where("email = LOWER(?)", email).First(&user).Error; err != nil {
+	if err := us.ReadDB.Where("email = LOWER(?)", email).Where("deleted_at = NULL").First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -112,4 +112,27 @@ func (us *UserService) Update(user *domain.User) (*domain.User, error) {
 	}
 
 	return user, nil
+}
+
+func (us *UserService) Delete(u *domain.User) error {
+	// Generate a random string using the user's ID
+	emailPlaceholder := u.ID.String() + domain.DeletedEmailPlaceholder
+
+	err := us.WriteDB.Model(&domain.User{}).
+		Where("id = ?", u.ID).
+		Where("deleted_at IS NULL").
+		Updates(map[string]interface{}{
+			"first_name":    nil,
+			"last_name":     nil,
+			"password":      domain.DeletedPasswordPlaceholder,
+			"username":      domain.DeletedUserPlaceholder,
+			"email":         emailPlaceholder,
+			"gender":        nil,
+			"date_of_birth": nil,
+			"country":       nil,
+			"city":          nil,
+			"deleted_at":    gorm.Expr("CURRENT_TIMESTAMP"),
+		}).Error
+
+	return err
 }

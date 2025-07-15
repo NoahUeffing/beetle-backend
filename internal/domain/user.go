@@ -6,6 +6,14 @@ import (
 	"github.com/google/uuid"
 )
 
+const (
+	UserHeaderAuthentication     string = "Authenticated"
+	UserHeaderAuthenticatedFalse string = "false"
+	DeletedEmailPlaceholder      string = "-deleted@email.com"
+	DeletedUserPlaceholder       string = "[deleted]"
+	DeletedPasswordPlaceholder   string = "$2y$00$deleteduserxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+)
+
 type UserAuthInput struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
@@ -16,6 +24,10 @@ type UserCreateInput struct {
 	Email           string `json:"email" validate:"required,email"`
 	Password        string `json:"password" validate:"required,min=8"`
 	PasswordConfirm string `json:"password_confirm" validate:"required,eqfield=Password"`
+}
+
+type PasswordInput struct {
+	Password string `json:"password" validate:"required"`
 }
 
 type User struct {
@@ -42,7 +54,7 @@ type IUserService interface {
 	ReadByEmail(email string) (*User, error)
 	ReadByID(id uuid.UUID) (*User, error)
 	Update(user *User) (*User, error)
+	Delete(user *User) error
 	// TODO: Add User Permissions
 	// TODO: Add Reset Password
-	// TODO: Add Delete User
 }
