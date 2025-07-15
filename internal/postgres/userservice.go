@@ -45,7 +45,7 @@ func (s *UserService) CreateUser(input *domain.UserCreateInput) (*domain.User, e
 
 func (us *UserService) ReadByEmail(email string) (*domain.User, error) {
 	var user domain.User
-	if err := us.ReadDB.Where("email = LOWER(?)", email).Where("deleted_at = NULL").First(&user).Error; err != nil {
+	if err := us.ReadDB.Where("email = LOWER(?)", email).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
