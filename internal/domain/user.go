@@ -30,6 +30,25 @@ type PasswordInput struct {
 	Password string `json:"password" validate:"required"`
 }
 
+type EmailInput struct {
+	Email string `json:"email" validate:"required,email"`
+}
+
+type PasswordResetInput struct {
+	Code            string `json:"code" validate:"required,len=6,numeric"`
+	Password        string `json:"password" validate:"required,min=8"`
+	PasswordConfirm string `json:"password_confirm" validate:"required,eqfield=Password"`
+	Email           string `json:"email" validate:"required,email"`
+}
+
+type PasswordResetCode struct {
+	Entity
+	UserID    uuid.UUID  `json:"userID"`
+	Code      string     `json:"code" validate:"required,len=6,numeric"`
+	Confirmed bool       `json:"confirmed"`
+	Expiry    *time.Time `json:"expiry"`
+}
+
 type User struct {
 	Entity
 	Email       string         `json:"email" validate:"email"`
@@ -55,6 +74,7 @@ type IUserService interface {
 	ReadByID(id uuid.UUID) (*User, error)
 	Update(user *User) (*User, error)
 	Delete(user *User) error
+	ResetPasswordCreate(user *User) error
+	ResetPasswordConfirm(pri *PasswordResetInput) error
 	// TODO: Add User Permissions
-	// TODO: Add Reset Password
 }

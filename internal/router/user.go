@@ -13,6 +13,8 @@ type UserRouteProvider struct{}
 func (r *UserRouteProvider) AddPublicRoutes(g *echo.Group, config config.Config) {
 	// Public user routes
 	g.POST("/user", WithContext(handler.CreateUser))
+	g.POST("/user/password-reset-codes", WithContext(handler.UserResetPasswordCreate))
+	g.POST("/user/password-reset-confirm", WithContext(handler.UserResetPasswordConfirm))
 }
 
 func (r *UserRouteProvider) AddPrivateRoutes(g *echo.Group, config config.Config) {

@@ -10,6 +10,7 @@ type Config struct {
 	Logs         LogsConfig
 	DB           DBsConfig
 	Auth         AuthConfig
+	Email        EmailConfig
 }
 
 type DBsConfig struct {
@@ -25,4 +26,9 @@ type LogsConfig struct {
 
 type AuthConfig struct {
 	Secret string
+}
+
+type EmailConfig struct {
+	ApiKey string
+	From   string // TODO
 }

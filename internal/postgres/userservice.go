@@ -3,17 +3,34 @@ package postgres
 import (
 	"beetle/internal/auth"
 	"beetle/internal/domain"
+	"beetle/internal/services"
+	"fmt"
+	"math/rand"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
+const (
+	emailPasswordRestCodeExpiryMinutes = 10
+	senderEmail                        = "noahueffing@gmail.com"
+	passwordResetSubject               = "Beetle Password Reset Code"
+	passwordResetBody                  = "Your password reset code is %d. This code expires in 10 minutes."
+	passwordResetHTML                  = "<div><div>Your password reset code is %d. This code expires in 10 minutes.</div></div>"
+)
+
 type UserService struct {
-	ReadDB      *gorm.DB
-	WriteDB     *gorm.DB
-	AuthService auth.IAuthService
+	ReadDB            *gorm.DB
+	WriteDB           *gorm.DB
+	AuthService       auth.IAuthService
+	MailerSendService services.MailerSendService
+}
+
+func generateCode() string {
+	return fmt.Sprintf("%06d", rand.Intn(999999))
 }
 
 func (s *UserService) CreateUser(input *domain.UserCreateInput) (*domain.User, error) {
@@ -135,4 +152,39 @@ func (us *UserService) Delete(u *domain.User) error {
 		}).Error
 
 	return err
+}
+
+func (us *UserService) ResetPasswordCreate(user *domain.User) error {
+	// Generate code with expiry
+	code := generateCode()
+	expiry := time.Now().Add(time.Minute * emailPasswordRestCodeExpiryMinutes)
+	resetCode := domain.PasswordResetCode{
+		UserID:    user.ID,
+		Code:      code,
+		Confirmed: false,
+		Expiry:    &expiry,
+	}
+	// Log to db
+	result := us.WriteDB.Model(&domain.PasswordResetCode{}).Create(&resetCode)
+	if result.Error != nil {
+		return result.Error
+	}
+	// Send Email
+	err := us.MailerSendService.Send(
+		"noahueffing@gmail.com",
+		user.Email,
+		passwordResetSubject,
+		fmt.Sprintf(passwordResetBody, emailPasswordRestCodeExpiryMinutes),
+		fmt.Sprintf(passwordResetHTML, emailPasswordRestCodeExpiryMinutes),
+	)
+	return err
+}
+
+func (us *UserService) ResetPasswordConfirm(pri *domain.PasswordResetInput) error {
+	// check code and expiry
+	// hash password
+	// store password
+	// update it to used
+	// TODO
+	return nil
 }
