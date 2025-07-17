@@ -4,7 +4,6 @@ import (
 	"beetle/internal/domain"
 	"beetle/internal/postgres"
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -182,21 +181,17 @@ func UserResetPasswordCreate(c Context) error {
 	}
 
 	user, err := c.UserService.ReadByEmail(email.Email)
-	fmt.Println("Point 1")
 
 	switch err {
 	case nil:
-		fmt.Println("Point 2")
 		err = c.UserService.ResetPasswordCreate(user)
 		if err != nil {
 			c.Echo().Logger.Errorf("Error sending confirmation email: %e\n", err)
 			return err
 		}
 	case sql.ErrNoRows, postgres.ErrEntityNotFound:
-		fmt.Println("Point 3")
 		return c.JSON(http.StatusOK, Message{Message: "Confirmation sent to " + email.Email})
 	default:
-		fmt.Println("Point 4")
 		c.Echo().Logger.Errorf("Error sending confirmation email: %e\n", err)
 		return err
 	}

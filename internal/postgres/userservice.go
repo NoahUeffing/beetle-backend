@@ -16,7 +16,7 @@ import (
 
 const (
 	emailPasswordRestCodeExpiryMinutes = 10
-	senderEmail                        = "noahueffing@gmail.com"
+	senderEmail                        = "MS_Q5UpmC@test-q3enl6k2ww842vwr.mlsender.net" // TODO: Fix this in mailersend
 	passwordResetSubject               = "Beetle Password Reset Code"
 	passwordResetBody                  = "Your password reset code is %d. This code expires in 10 minutes."
 	passwordResetHTML                  = "<div><div>Your password reset code is %d. This code expires in 10 minutes.</div></div>"
@@ -185,6 +185,6 @@ func (us *UserService) ResetPasswordConfirm(pri *domain.PasswordResetInput) erro
 	// hash password
 	// store password
 	// update it to used
-	// TODO
+	// TODO: Add once mailersend is sorted
 	return nil
 }

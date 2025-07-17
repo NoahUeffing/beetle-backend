@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -38,8 +39,6 @@ type EmailAddress struct {
 
 // sendEmail sends an email via MailerSend API
 func (ms *MailerSendService) Send(fromEmail, toEmail, subject, textBody, htmlBody string) error {
-	fmt.Println("In MailerSend")
-	fmt.Println(ms.Config.ApiKey)
 	email := EmailRequest{
 		From: EmailAddress{
 			Email: fromEmail,
@@ -81,6 +80,10 @@ func (ms *MailerSendService) Send(fromEmail, toEmail, subject, textBody, htmlBod
 		fmt.Println("Email sent successfully.")
 		return nil
 	}
+
+	// Print the error response from MailerSend
+	body, _ := io.ReadAll(resp.Body)
+	fmt.Println("MailerSend error response:", string(body))
 
 	return fmt.Errorf("failed to send email: %s", resp.Status)
 }
