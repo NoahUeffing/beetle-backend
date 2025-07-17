@@ -16,7 +16,7 @@ import (
 
 const (
 	emailPasswordRestCodeExpiryMinutes = 10
-	senderEmail                        = "MS_Q5UpmC@test-q3enl6k2ww842vwr.mlsender.net" // TODO: Fix this in mailersend
+	senderEmail                        = "" // TODO: Fix this in mailersend, don't expose SMTP
 	passwordResetSubject               = "Beetle Password Reset Code"
 	passwordResetBody                  = "Your password reset code is %d. This code expires in 10 minutes."
 	passwordResetHTML                  = "<div><div>Your password reset code is %d. This code expires in 10 minutes.</div></div>"
