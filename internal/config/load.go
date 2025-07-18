@@ -40,6 +40,8 @@ func (c *Config) LoadFromEnv() error {
 	c.DB.Write = env.Get("BEETLE_DB_WRITE", c.DB.Write)
 	c.Auth.Secret = env.Get("JWT_SECRET", c.Auth.Secret)
 	c.MigrationDir = env.Get("MIGRATION_DIR", c.MigrationDir)
+	c.Email.ApiKey = env.Get("MAILERSEND_TOKEN", c.Email.ApiKey)
+	c.Email.From = env.Get("MAILERSEND_USER", c.Email.From)
 	return nil
 }
 

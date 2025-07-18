@@ -8,15 +8,16 @@ import (
 )
 
 var (
-	ErrEntityVersionConflict  = errors.New("entity submitted is out of date")
-	ErrEntityNotFound         = errors.New("entity was not found")
-	ErrEntityNonUnique        = errors.New("the entity you are trying to create already exists")
-	ErrInvalidCredentials     = errors.New("email or password invalid")
-	ErrEmailAlreadyAssociated = errors.New("email is already associated with user")
-	ErrUsernameTaken          = errors.New("username is not available")
-	ErrProfaneString          = errors.New("non-profane string could not be created")
-	ErrReadingEntity          = errors.New("error reading entity")
-	ErrInvalidAction          = errors.New("invalid action")
+	ErrEntityVersionConflict    = errors.New("entity submitted is out of date")
+	ErrEntityNotFound           = errors.New("entity was not found")
+	ErrEntityNonUnique          = errors.New("the entity you are trying to create already exists")
+	ErrInvalidCredentials       = errors.New("email or password invalid")
+	ErrEmailAlreadyAssociated   = errors.New("email is already associated with user")
+	ErrUsernameTaken            = errors.New("username is not available")
+	ErrProfaneString            = errors.New("non-profane string could not be created")
+	ErrReadingEntity            = errors.New("error reading entity")
+	ErrInvalidAction            = errors.New("invalid action")
+	ErrPasswordResetCodeInvalid = errors.New("password reset code incorrect or expired")
 )
 
 func ConvertErrorIfNeeded(err error) error {

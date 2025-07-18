@@ -9,6 +9,7 @@ import (
 	"beetle/internal/healthcheck"
 	"beetle/internal/postgres"
 	"beetle/internal/server"
+	"beetle/internal/services"
 	"beetle/internal/validation"
 	_ "beetle/swaggergenerated" // Required for Swagger docs
 
@@ -37,6 +38,7 @@ func main() {
 	migrate(config.MigrationDir, writeDB)
 
 	authService := auth.New(config.Auth)
+	mailerSendService := services.NewMailerSendService(config.Email)
 
 	PaginationService := &postgres.PaginationService{
 		ReadDB:  gormReadDB,
@@ -46,9 +48,10 @@ func main() {
 	cc := handler.ContextConfig{
 		AuthService: authService,
 		UserService: &postgres.UserService{
-			ReadDB:      gormReadDB,
-			WriteDB:     gormWriteDB,
-			AuthService: authService,
+			ReadDB:            gormReadDB,
+			WriteDB:           gormWriteDB,
+			AuthService:       authService,
+			MailerSendService: *mailerSendService,
 		},
 		CompanyService: &postgres.CompanyService{
 			ReadDB:            gormReadDB,

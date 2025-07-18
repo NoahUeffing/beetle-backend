@@ -51,6 +51,8 @@ services:
       BEETLE_DB_READ: "host=database port=5432 user=postgres password=postgres dbname=beetle sslmode=disable"
       BEETLE_JWT_SECRET: some-really-long-signing-key
       BEETLE_MIGRATION_DIR: ./assets/db/migrations
+      MAILERSEND_TOKEN: ${MAILERSEND_TOKEN}
+      MAILERSEND_USER: ${MAILERSEND_USER}
     ports:
       - "8080:8080"
 

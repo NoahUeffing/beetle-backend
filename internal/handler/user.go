@@ -3,6 +3,7 @@ package handler
 import (
 	"beetle/internal/domain"
 	"beetle/internal/postgres"
+	"database/sql"
 	"log"
 	"net/http"
 
@@ -156,4 +157,75 @@ func UserDelete(c Context) error {
 	}
 	c.Response().Header().Set(domain.UserHeaderAuthentication, domain.UserHeaderAuthenticatedFalse)
 	return c.JSON(http.StatusOK, Message{Message: "User deleted"})
+}
+
+// UserResetPasswordCreate godoc
+// @Summary Create a new email confirmation for forgotten password
+// @Description Creates a new email confirmation to trigger reset password
+// @ID v1-user-reset-password-code
+// @Tags user
+// @Produce json
+// @Param emailInput body domain.EmailInput true "Password reset form input"
+// @Success 200 {object} handler.Message
+// @Failure 400 {object} handler.Message
+// @Failure 500 {object} handler.Message
+// @Router /user/password-reset-codes [post]
+func UserResetPasswordCreate(c Context) error {
+	email := &domain.EmailInput{}
+	if err := c.Bind(email); err != nil {
+		return err
+	}
+
+	if formErrs := c.validate(email); formErrs != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, formErrs)
+	}
+
+	user, err := c.UserService.ReadByEmail(email.Email)
+
+	switch err {
+	case nil:
+		err = c.UserService.ResetPasswordCreate(user)
+		if err != nil {
+			c.Echo().Logger.Errorf("Error sending confirmation email: %e\n", err)
+			return err
+		}
+	case sql.ErrNoRows, postgres.ErrEntityNotFound:
+		return c.JSON(http.StatusOK, Message{Message: "Confirmation sent to " + email.Email})
+	default:
+		c.Echo().Logger.Errorf("Error sending confirmation email: %e\n", err)
+		return err
+	}
+
+	return c.JSON(http.StatusOK, Message{Message: "Email confirmation sent to " + email.Email})
+}
+
+// UserResetPasswordConfirm godoc
+// @Summary Confirm a password reset code
+// @Description Confirms a password reset
+// @ID v1-user-reset-password-confirm
+// @Tags user
+// @Produce json
+// @Param member body domain.PasswordResetInput true "Password reset confirm input"
+// @Success 200 {object} handler.Message
+// @Failure 400 {object} handler.Message
+// @Failure 500 {object} handler.Message
+// @Router /user/password-reset-confirm [post]
+func UserResetPasswordConfirm(c Context) error {
+	pass := &domain.PasswordResetInput{}
+	if err := c.Bind(pass); err != nil {
+		return err
+	}
+
+	if formErrs := c.validate(pass); formErrs != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, formErrs)
+	}
+
+	if err := c.UserService.ResetPasswordConfirm(pass); err != nil {
+		if err == postgres.ErrPasswordResetCodeInvalid {
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
+		return err
+	}
+
+	return c.JSON(http.StatusOK, Message{Message: "Password reset confirmed"})
 }
