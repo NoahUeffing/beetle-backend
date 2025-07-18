@@ -38,10 +38,11 @@ type EmailAddress struct {
 }
 
 // sendEmail sends an email via MailerSend API
-func (ms *MailerSendService) Send(fromEmail, toEmail, subject, textBody, htmlBody string) error {
+func (ms *MailerSendService) Send(toEmail, subject, textBody, htmlBody string) error {
+	// TODO: Configure with non-test domain
 	email := EmailRequest{
 		From: EmailAddress{
-			Email: fromEmail,
+			Email: ms.Config.From,
 			Name:  "Beetle",
 		},
 		To: []EmailAddress{
@@ -77,7 +78,6 @@ func (ms *MailerSendService) Send(fromEmail, toEmail, subject, textBody, htmlBod
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		fmt.Println("Email sent successfully.")
 		return nil
 	}
 

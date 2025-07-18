@@ -18,8 +18,8 @@ const (
 	emailPasswordRestCodeExpiryMinutes = 10
 	senderEmail                        = "" // TODO: Fix this in mailersend, don't expose SMTP
 	passwordResetSubject               = "Beetle Password Reset Code"
-	passwordResetBody                  = "Your password reset code is %d. This code expires in 10 minutes."
-	passwordResetHTML                  = "<div><div>Your password reset code is %d. This code expires in 10 minutes.</div></div>"
+	passwordResetBody                  = "Your password reset code is %s. This code expires in %d minutes."
+	passwordResetHTML                  = "<div><div>Your password reset code is %s. This code expires in %d minutes.</div></div>"
 )
 
 type UserService struct {
@@ -92,6 +92,10 @@ func (us *UserService) ReadByID(id uuid.UUID) (*domain.User, error) {
 }
 
 func (us *UserService) Update(user *domain.User) (*domain.User, error) {
+	return us.UpdateUserTx(us.WriteDB, user)
+}
+
+func (us *UserService) UpdateUserTx(tx *gorm.DB, user *domain.User) (*domain.User, error) {
 	// Get existing user record
 	existing, err := us.ReadByID(user.ID)
 	if err != nil {
@@ -171,20 +175,49 @@ func (us *UserService) ResetPasswordCreate(user *domain.User) error {
 	}
 	// Send Email
 	err := us.MailerSendService.Send(
-		"noahueffing@gmail.com",
 		user.Email,
 		passwordResetSubject,
-		fmt.Sprintf(passwordResetBody, emailPasswordRestCodeExpiryMinutes),
-		fmt.Sprintf(passwordResetHTML, emailPasswordRestCodeExpiryMinutes),
+		fmt.Sprintf(passwordResetBody, code, emailPasswordRestCodeExpiryMinutes),
+		fmt.Sprintf(passwordResetHTML, code, emailPasswordRestCodeExpiryMinutes),
 	)
 	return err
 }
 
 func (us *UserService) ResetPasswordConfirm(pri *domain.PasswordResetInput) error {
-	// check code and expiry
-	// hash password
-	// store password
-	// update it to used
-	// TODO: Add once mailersend is sorted
-	return nil
+	return us.WriteDB.Transaction(func(tx *gorm.DB) error {
+		// 1. Fetch user by email
+		user, err := us.ReadByEmail(pri.Email)
+		if err != nil {
+			return err
+		}
+
+		// 2. Fetch the password reset code (with row lock for safety)
+		var resetCode domain.PasswordResetCode
+		result := tx.Model(&domain.PasswordResetCode{}).
+			Where("code = ?", pri.Code).
+			Where("expiry > ?", time.Now()).
+			Where("confirmed = false").
+			Where("user_id = ?", user.ID).
+			First(&resetCode)
+		if result.Error != nil {
+			return result.Error
+		}
+
+		// 3. Update the user's password
+		user.Password = pri.Password
+		_, err = us.UpdateUserTx(tx, user)
+		if err != nil {
+			return err
+		}
+
+		// 4. Mark the code as confirmed
+		result = tx.Model(&domain.PasswordResetCode{}).
+			Where("id = ?", resetCode.ID).
+			Update("confirmed", true)
+		if result.Error != nil {
+			return result.Error
+		}
+
+		return nil
+	})
 }

@@ -30,5 +30,5 @@ type AuthConfig struct {
 
 type EmailConfig struct {
 	ApiKey string
-	From   string // TODO
+	From   string
 }
