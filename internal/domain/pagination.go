@@ -29,5 +29,5 @@ func (pi *PaginationQuery) CreateResults() (PaginatedResults, int) {
 }
 
 type IPaginationService interface {
-	Paginate(model any, results *PaginatedResults, offset int) error
+	Paginate(model any, results *PaginatedResults, offset int, filters ...Filter) error
 }

@@ -42,9 +42,13 @@ type ProductLicense struct {
 	FlagAttestedMonograph bool      `json:"flag_attested_monograph"`
 }
 
+type ProductNameFilter struct {
+	ProductName string `json:"product_name"`
+}
+
 type IProductService interface {
 	ReadLicenseByID(id uuid.UUID) (*ProductLicense, error)
-	GetLicenses(pi *PaginationQuery) (*PaginatedResults, error) // TODO: Add filtering and sorting
+	GetLicenses(pi *PaginationQuery, filters ...Filter) (*PaginatedResults, error) // TODO: Add filtering and sorting
 	GetDosageForms(pi *PaginationQuery) (*PaginatedResults, error)
 	ReadDosageFormByID(id uuid.UUID) (*DosageForm, error)
 	GetSubmissionTypes(pi *PaginationQuery) (*PaginatedResults, error)
