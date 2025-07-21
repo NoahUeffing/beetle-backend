@@ -9,6 +9,10 @@ type Company struct {
 	CompanyNameID int    `json:"company_name_id"`
 }
 
+type CompanyFilter struct {
+	CompanyName string `json:"company_name"`
+}
+
 type ICompanyService interface {
 	ReadByID(id uuid.UUID) (*Company, error)
 	GetCompanies(pi *PaginationQuery) (*PaginatedResults, error) // TODO: Add filtering and sorting

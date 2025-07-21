@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"beetle/internal/domain"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -26,7 +28,7 @@ func GetProductLicense(c Context) error {
 		return err
 	}
 
-	user, err := c.ProductService.ReadLicenseByID(id)
+	license, err := c.ProductService.ReadLicenseByID(id)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return echo.NewHTTPError(http.StatusNotFound, map[string]string{"error": "License not found"})
@@ -34,15 +36,18 @@ func GetProductLicense(c Context) error {
 		return echo.NewHTTPError(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve license"})
 	}
 
-	return c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusOK, license)
 }
 
 // GetLicenses godoc
-// @Summary Get all product licenses
-// @Description Get all product licenses
+// @Summary Get product licenses
+// @Description Get product licenses
 // @Tags product
 // @Accept json
 // @Produce json
+// @Param companies query string false "Comma-separated list of IDs, max of 5"
+// @Param forms query string false "Comma-separated list of IDs, max of 5"
+// @Param name query string false "Name to search"
 // @Param page query int false "Page number (default: 1)"
 // @Param limit query int false "Number of items per page (default: 12, max: 120)"
 // @Success 200 {object} domain.PaginatedResults
@@ -52,9 +57,54 @@ func GetProductLicense(c Context) error {
 // @Failure 500 {string} string "Internal server error"
 // @Router /product/licenses [get]
 func GetLicenses(c Context) error {
-	licenses, err := c.ProductService.GetLicenses(c.PaginationQuery)
+	// TODO: Abstract some logic
+	var filters []domain.Filter
+
+	// Company IDs
+	if ids := c.QueryParam("companies"); ids != "" {
+		idStrings := strings.Split(ids, ",")
+		if len(idStrings) > 5 { // limit
+			return echo.NewHTTPError(http.StatusBadRequest, map[string]string{"error": "Too many company IDs"})
+		}
+		parsed, err := parseUUIDs(idStrings)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, map[string]string{"error": "Invalid company ID(s)"})
+		}
+		filters = append(filters, domain.Filter{
+			Field:    "company",
+			Operator: "in",
+			Value:    parsed,
+		})
+	}
+	// Dosage Form IDs
+	if ids := c.QueryParam("forms"); ids != "" {
+		idStrings := strings.Split(ids, ",")
+		if len(idStrings) > 20 { // limit
+			return echo.NewHTTPError(http.StatusBadRequest, map[string]string{"error": "Too many form IDs"})
+		}
+		parsed, err := parseUUIDs(idStrings)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, map[string]string{"error": "Invalid dosage form ID(s)"})
+		}
+		filters = append(filters, domain.Filter{
+			Field:    "form",
+			Operator: "in",
+			Value:    parsed,
+		})
+	}
+
+	// Name search
+	if name := c.QueryParam("name"); name != "" {
+		filters = append(filters, domain.Filter{
+			Field:    "name",
+			Operator: "like",
+			Value:    name,
+		})
+	}
+	// Pass filters to service
+	licenses, err := c.ProductService.GetLicenses(c.PaginationQuery, filters...)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve licenses"})
+		return err
 	}
 	return c.JSON(http.StatusOK, licenses)
 }

@@ -21,11 +21,11 @@ func (s *ProductService) ReadLicenseByID(id uuid.UUID) (*domain.ProductLicense, 
 	return &productLicense, nil
 }
 
-func (s *ProductService) GetLicenses(pi *domain.PaginationQuery) (*domain.PaginatedResults, error) {
+func (s *ProductService) GetLicenses(pi *domain.PaginationQuery, filters ...domain.Filter) (*domain.PaginatedResults, error) {
 	var licenses []domain.ProductLicense
 	results, offset := pi.CreateResults()
 
-	if err := s.PaginationService.Paginate(&licenses, &results, offset); err != nil {
+	if err := s.PaginationService.Paginate(&licenses, &results, offset, filters...); err != nil {
 		return nil, err
 	}
 	return &results, nil

@@ -14,14 +14,19 @@ type PaginationService struct {
 }
 
 // Paginate handles common pagination logic for database queries
-func (s *PaginationService) Paginate(model any, results *domain.PaginatedResults, offset int) error {
+func (s *PaginationService) Paginate(model any, results *domain.PaginatedResults, offset int, filters ...domain.Filter) error {
+	db := s.ReadDB.Model(model)
+	for _, filter := range filters {
+		db = filter.Apply(db)
+	}
+
 	var total int64
-	if err := s.ReadDB.Model(model).Count(&total).Error; err != nil {
+	if err := db.Count(&total).Error; err != nil {
 		return err
 	}
 	results.Total = int(total)
 
-	if err := s.ReadDB.Offset(offset).Limit(results.Limit).Find(model).Error; err != nil {
+	if err := db.Offset(offset).Limit(results.Limit).Find(model).Error; err != nil {
 		return err
 	}
 
