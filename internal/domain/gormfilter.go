@@ -4,6 +4,10 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	MaxFilterIDs = 5
+)
+
 var fieldMap = map[string]string{
 	"product search": "product_name",
 	"company search": "company_name",
