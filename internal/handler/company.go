@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"beetle/internal/domain"
 	"beetle/internal/postgres"
 	"net/http"
 
@@ -60,16 +59,8 @@ func GetCompany(c Context) error {
 // @Failure 500 {string} string "Internal server error"
 // @Router /company [get]
 func GetCompanies(c Context) error {
-	// TODO: Abstract some logic
-	var filter domain.Filter
-	if name := c.QueryParam("name"); name != "" {
-		filter = domain.Filter{
-			Field:    "company search",
-			Operator: "like",
-			Value:    name,
-		}
-	}
-	companies, err := c.CompanyService.GetCompanies(c.PaginationQuery, filter)
+	filter := buildStringFilter(c, "name", "company search", "like")
+	companies, err := c.CompanyService.GetCompanies(c.PaginationQuery, *filter)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve companies"})
 	}

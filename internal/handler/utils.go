@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"beetle/internal/domain"
 	"beetle/internal/postgres"
 	"fmt"
 	"net/http"
@@ -35,4 +36,36 @@ func parseUUIDs(ids []string) ([]uuid.UUID, error) {
 		uuids = append(uuids, u)
 	}
 	return uuids, nil
+}
+
+func buildIDFilter(c Context, param, field string) (*domain.Filter, error) {
+	ids := c.QueryParam(param)
+	if ids == "" {
+		return nil, nil
+	}
+	idStrings := strings.Split(ids, ",")
+	if len(idStrings) > domain.MaxFilterIDs {
+		return nil, echo.NewHTTPError(http.StatusBadRequest, map[string]string{"error": fmt.Sprintf("Too many %s IDs", field)})
+	}
+	parsed, err := parseUUIDs(idStrings)
+	if err != nil {
+		return nil, echo.NewHTTPError(http.StatusBadRequest, map[string]string{"error": fmt.Sprintf("Invalid %s ID(s)", field)})
+	}
+	return &domain.Filter{
+		Field:    field,
+		Operator: "in",
+		Value:    parsed,
+	}, nil
+}
+
+func buildStringFilter(c Context, param, field, operator string) *domain.Filter {
+	value := c.QueryParam(param)
+	if value == "" {
+		return nil
+	}
+	return &domain.Filter{
+		Field:    field,
+		Operator: operator,
+		Value:    value,
+	}
 }

@@ -3,7 +3,6 @@ package handler
 import (
 	"beetle/internal/domain"
 	"net/http"
-	"strings"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -57,52 +56,24 @@ func GetProductLicense(c Context) error {
 // @Failure 500 {string} string "Internal server error"
 // @Router /product/licenses [get]
 func GetLicenses(c Context) error {
-	// TODO: Abstract some logic
 	var filters []domain.Filter
 
-	// TODO: Clean up these filters
-	// Company IDs
-	if ids := c.QueryParam("companies"); ids != "" {
-		idStrings := strings.Split(ids, ",")
-		if len(idStrings) > 5 { // limit
-			return echo.NewHTTPError(http.StatusBadRequest, map[string]string{"error": "Too many company IDs"})
-		}
-		parsed, err := parseUUIDs(idStrings)
-		if err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, map[string]string{"error": "Invalid company ID(s)"})
-		}
-		filters = append(filters, domain.Filter{
-			Field:    "company",
-			Operator: "in",
-			Value:    parsed,
-		})
-	}
-	// Dosage Form IDs
-	if ids := c.QueryParam("forms"); ids != "" {
-		idStrings := strings.Split(ids, ",")
-		if len(idStrings) > 20 { // limit
-			return echo.NewHTTPError(http.StatusBadRequest, map[string]string{"error": "Too many form IDs"})
-		}
-		parsed, err := parseUUIDs(idStrings)
-		if err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, map[string]string{"error": "Invalid dosage form ID(s)"})
-		}
-		filters = append(filters, domain.Filter{
-			Field:    "form",
-			Operator: "in",
-			Value:    parsed,
-		})
+	if filter, err := buildIDFilter(c, "companies", "company"); err != nil {
+		return err
+	} else if filter != nil {
+		filters = append(filters, *filter)
 	}
 
-	// Name search
-	if name := c.QueryParam("name"); name != "" {
-		filters = append(filters, domain.Filter{
-			Field:    "product search",
-			Operator: "like",
-			Value:    name,
-		})
+	if filter, err := buildIDFilter(c, "forms", "form"); err != nil {
+		return err
+	} else if filter != nil {
+		filters = append(filters, *filter)
 	}
-	// Pass filters to service
+
+	if filter := buildStringFilter(c, "name", "product search", "like"); filter != nil {
+		filters = append(filters, *filter)
+	}
+
 	licenses, err := c.ProductService.GetLicenses(c.PaginationQuery, filters...)
 	if err != nil {
 		return err
