@@ -5,9 +5,10 @@ import (
 )
 
 var fieldMap = map[string]string{
-	"name":    "product_name",
-	"company": "company_id",
-	"form":    "dosage_form_id",
+	"product search": "product_name",
+	"company search": "company_name",
+	"company":        "company_id",
+	"form":           "dosage_form_id",
 }
 
 type GormFilter interface {

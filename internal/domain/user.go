@@ -77,4 +77,5 @@ type IUserService interface {
 	ResetPasswordCreate(user *User) error
 	ResetPasswordConfirm(pri *PasswordResetInput) error
 	// TODO: Add User Permissions
+	// TODO: Add user search
 }

@@ -45,8 +45,8 @@ func GetProductLicense(c Context) error {
 // @Tags product
 // @Accept json
 // @Produce json
-// @Param companies query string false "Comma-separated list of IDs, max of 5"
-// @Param forms query string false "Comma-separated list of IDs, max of 5"
+// @Param companies query string false "Comma-separated list (%2C) of IDs, max of 5"
+// @Param forms query string false "Comma-separated list (%2C) of IDs, max of 5"
 // @Param name query string false "Name to search"
 // @Param page query int false "Page number (default: 1)"
 // @Param limit query int false "Number of items per page (default: 12, max: 120)"
@@ -60,6 +60,7 @@ func GetLicenses(c Context) error {
 	// TODO: Abstract some logic
 	var filters []domain.Filter
 
+	// TODO: Clean up these filters
 	// Company IDs
 	if ids := c.QueryParam("companies"); ids != "" {
 		idStrings := strings.Split(ids, ",")
@@ -96,7 +97,7 @@ func GetLicenses(c Context) error {
 	// Name search
 	if name := c.QueryParam("name"); name != "" {
 		filters = append(filters, domain.Filter{
-			Field:    "name",
+			Field:    "product search",
 			Operator: "like",
 			Value:    name,
 		})
