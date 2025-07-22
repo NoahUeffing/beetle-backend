@@ -21,11 +21,11 @@ func (s *CompanyService) ReadByID(id uuid.UUID) (*domain.Company, error) {
 	return &company, nil
 }
 
-func (s *CompanyService) GetCompanies(pi *domain.PaginationQuery) (*domain.PaginatedResults, error) {
+func (s *CompanyService) GetCompanies(pi *domain.PaginationQuery, filters ...domain.Filter) (*domain.PaginatedResults, error) {
 	var companies []domain.Company
 	results, offset := pi.CreateResults()
 
-	if err := s.PaginationService.Paginate(&companies, &results, offset); err != nil {
+	if err := s.PaginationService.Paginate(&companies, &results, offset, filters...); err != nil {
 		return nil, err
 	}
 	return &results, nil

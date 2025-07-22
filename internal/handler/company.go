@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"beetle/internal/domain"
 	"beetle/internal/postgres"
 	"net/http"
 
@@ -44,11 +45,12 @@ func GetCompany(c Context) error {
 }
 
 // GetCompanies godoc
-// @Summary Get all companies
-// @Description Get all companies
+// @Summary Get companies
+// @Description Get companies
 // @Tags company
 // @Accept json
 // @Produce json
+// @Param name query string false "Name to search"
 // @Param page query int false "Page number (default: 1)"
 // @Param limit query int false "Number of items per page (default: 12, max: 120)"
 // @Success 200 {object} domain.PaginatedResults
@@ -58,7 +60,16 @@ func GetCompany(c Context) error {
 // @Failure 500 {string} string "Internal server error"
 // @Router /company [get]
 func GetCompanies(c Context) error {
-	companies, err := c.CompanyService.GetCompanies(c.PaginationQuery)
+	// TODO: Abstract some logic
+	var filter domain.Filter
+	if name := c.QueryParam("name"); name != "" {
+		filter = domain.Filter{
+			Field:    "company search",
+			Operator: "like",
+			Value:    name,
+		}
+	}
+	companies, err := c.CompanyService.GetCompanies(c.PaginationQuery, filter)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, map[string]string{"error": "Failed to retrieve companies"})
 	}

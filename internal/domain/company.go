@@ -15,5 +15,5 @@ type CompanyFilter struct {
 
 type ICompanyService interface {
 	ReadByID(id uuid.UUID) (*Company, error)
-	GetCompanies(pi *PaginationQuery) (*PaginatedResults, error) // TODO: Add filtering and sorting
+	GetCompanies(pi *PaginationQuery, filters ...Filter) (*PaginatedResults, error) // TODO: Add filtering and sorting
 }
