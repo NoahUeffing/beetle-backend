@@ -62,14 +62,15 @@ type User struct {
 	City        NullableString `json:"city,omitempty"`
 }
 
-type UserAuthToken struct {
-	Token string `json:"token"`
+type UserAuthTokens struct {
+	Token        string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 type IUserService interface {
 	CreateUser(newUser *UserCreateInput) (*User, error)
 	CheckPassword(user *User, password string) error
-	CreateAuthToken(user *User) (*UserAuthToken, error)
+	CreateAuthToken(user *User) (*UserAuthTokens, error)
 	ReadByEmail(email string) (*User, error)
 	ReadByID(id uuid.UUID) (*User, error)
 	Update(user *User) (*User, error)

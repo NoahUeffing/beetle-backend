@@ -20,19 +20,19 @@ func TestNew(t *testing.T) {
 	assert.Equal(t, cfg, a.Config)
 }
 
-func TestNewToken(t *testing.T) {
+func TestNewTokens(t *testing.T) {
 	cfg := config.AuthConfig{Secret: "test-secret"}
 	a := auth.New(cfg)
 
 	userId := uuid.New()
 	data := &auth.ClaimsData{UserId: userId}
 
-	token, err := a.NewToken(data)
+	token, err := a.NewTokens(data)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, token)
 
 	// Verify the token can be parsed and contains correct claims
-	parsedToken, err := jwt.ParseWithClaims(token, &auth.CombinedClaims{}, func(token *jwt.Token) (interface{}, error) {
+	parsedToken, err := jwt.ParseWithClaims(token.AccessToken, &auth.CombinedClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(cfg.Secret), nil
 	})
 	assert.NoError(t, err)
