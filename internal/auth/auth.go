@@ -12,18 +12,24 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-const tokenDurationDays = 14
 const dayLengthHours = 24
-const tokenDuration = tokenDurationDays * dayLengthHours * time.Hour
+const authTokenDuration = 14 * dayLengthHours * time.Hour
+const refreshTokenDuration = 30 * dayLengthHours * time.Hour
 
 var ErrUnauthorized = errors.New("invalid or missing authorization token")
+
+type Tokens struct {
+	AccessToken  string
+	RefreshToken string
+	// TODO: Should this be stored in database, and only sent back in http instead of json?
+}
 
 type Auth struct {
 	Config config.AuthConfig
 }
 
 type IAuthService interface {
-	NewToken(data *ClaimsData) (string, error)
+	NewTokens(data *ClaimsData) (*Tokens, error)
 	GetMiddleware() echo.MiddlewareFunc
 	GetClaims(c echo.Context) (*CombinedClaims, error)
 }
@@ -32,14 +38,33 @@ func New(c config.AuthConfig) *Auth {
 	return &Auth{Config: c}
 }
 
-func (a *Auth) NewToken(data *ClaimsData) (string, error) {
-	return a.buildToken(&CombinedClaims{
+func (a *Auth) NewTokens(data *ClaimsData) (*Tokens, error) {
+	accessToken, err := a.buildToken(&CombinedClaims{
 		ClaimsData: *data,
 		RegisteredClaims: jwt.RegisteredClaims{
 			IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
-			ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(tokenDuration)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(authTokenDuration)),
 		},
 	})
+	if err != nil {
+		return nil, err
+	}
+
+	refreshToken, err := a.buildToken(&CombinedClaims{
+		ClaimsData: *data,
+		RegisteredClaims: jwt.RegisteredClaims{
+			IssuedAt:  jwt.NewNumericDate(time.Now().UTC()),
+			ExpiresAt: jwt.NewNumericDate(time.Now().UTC().Add(refreshTokenDuration)),
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &Tokens{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
 }
 
 func (a *Auth) buildToken(claims *CombinedClaims) (string, error) {

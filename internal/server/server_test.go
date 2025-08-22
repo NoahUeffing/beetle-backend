@@ -70,8 +70,11 @@ func TestServerErrorHandler(t *testing.T) {
 // mockAuthService implements the auth.IAuthService interface for testing
 type mockAuthService struct{}
 
-func (m *mockAuthService) NewToken(data *auth.ClaimsData) (string, error) {
-	return "mock-token", nil
+func (m *mockAuthService) NewTokens(data *auth.ClaimsData) (*auth.Tokens, error) {
+	return &auth.Tokens{
+		AccessToken:  "mock-access-token",
+		RefreshToken: "mock-refresh-token",
+	}, nil
 }
 
 func (m *mockAuthService) GetMiddleware() echo.MiddlewareFunc {

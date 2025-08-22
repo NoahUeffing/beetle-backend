@@ -51,3 +51,5 @@ func AuthTokenCreate(c Context) error {
 
 	return c.JSON(http.StatusOK, t)
 }
+
+//TODO: Add refresh token

@@ -13,6 +13,7 @@ type ProductService struct {
 	PaginationService domain.IPaginationService
 }
 
+// TODO: Return comapny and dosage names, not just id
 func (s *ProductService) ReadLicenseByID(id uuid.UUID) (*domain.ProductLicense, error) {
 	var productLicense domain.ProductLicense
 	if err := s.ReadDB.Where("id = ?", id).First(&productLicense).Error; err != nil {
@@ -21,6 +22,7 @@ func (s *ProductService) ReadLicenseByID(id uuid.UUID) (*domain.ProductLicense, 
 	return &productLicense, nil
 }
 
+// TODO: Return comapny and dosage names, not just id
 func (s *ProductService) GetLicenses(pi *domain.PaginationQuery, filters ...domain.Filter) (*domain.PaginatedResults, error) {
 	var licenses []domain.ProductLicense
 	results, offset := pi.CreateResults()

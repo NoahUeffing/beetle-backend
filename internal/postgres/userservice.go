@@ -68,15 +68,15 @@ func (us *UserService) ReadByEmail(email string) (*domain.User, error) {
 	return &user, nil
 }
 
-func (us *UserService) CreateAuthToken(u *domain.User) (*domain.UserAuthToken, error) {
-	ts, err := us.AuthService.NewToken(&auth.ClaimsData{
+func (us *UserService) CreateAuthToken(u *domain.User) (*domain.UserAuthTokens, error) {
+	ts, err := us.AuthService.NewTokens(&auth.ClaimsData{
 		UserId: u.ID,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return &domain.UserAuthToken{Token: ts}, err
+	return &domain.UserAuthTokens{Token: ts.AccessToken, RefreshToken: ts.RefreshToken}, err
 }
 
 func (s *UserService) CheckPassword(user *domain.User, password string) error {
